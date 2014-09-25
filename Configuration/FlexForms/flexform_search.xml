@@ -1,0 +1,53 @@
+<T3DataStructure>
+	<meta>
+		<langDisable>1</langDisable>
+	</meta>
+
+	<sheets>
+		<!--
+			################################
+			  SHEET General Settings
+			################################
+		-->
+		<sDEF>
+			<ROOT>
+				<TCEforms>
+					<sheetTitle>LLL:EXT:solr_fluid_result/Resources/Private/Language/locallang_be.xlf:flexforms_tab.settings</sheetTitle>
+				</TCEforms>
+				<type>array</type>
+				<el>
+					<settings.querySetting>
+						<TCEforms>
+						<label>LLL:EXT:solr_fluid_result/Resources/Private/Language/locallang_be.xlf:flexforms_general.querySetting</label>
+							<config>
+								<type>select</type>
+								<itemsProcFunc>MbhSoftware\SolrFluidResult\Hooks\ItemsProcFunc->addQuerySettings</itemsProcFunc>
+								<items>
+									<numIndex index="0" type="array">
+										<numIndex index="0"></numIndex>
+										<numIndex index="1"></numIndex>
+									</numIndex>
+								</items>
+							</config>
+						</TCEforms>
+					</settings.querySetting>
+					<settings.templateLayout>
+						<TCEforms>
+						<label>LLL:EXT:solr_fluid_result/Resources/Private/Language/locallang_be.xlf:flexforms_general.templateLayout</label>
+							<config>
+								<type>select</type>
+								<itemsProcFunc>MbhSoftware\SolrFluidResult\Hooks\ItemsProcFunc->addTemplateLayouts</itemsProcFunc>
+								<items>
+									<numIndex index="0" type="array">
+										<numIndex index="0"></numIndex>
+										<numIndex index="1"></numIndex>
+									</numIndex>
+								</items>
+							</config>
+						</TCEforms>
+					</settings.templateLayout>
+				</el>
+			</ROOT>
+		</sDEF>
+	</sheets>
+</T3DataStructure>

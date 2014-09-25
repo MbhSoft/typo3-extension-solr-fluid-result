@@ -1,0 +1,11 @@
+plugin.tx_solrfluidresult {
+	settings {
+		templateLayouts {
+
+		}
+
+		querySettings {
+
+		}
+	}
+}
