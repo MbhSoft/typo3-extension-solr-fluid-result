@@ -94,10 +94,39 @@ class SearchController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 			$sorting = $this->configurationManager->getContentObject()->cObjGetSingle($selectedQuerySettings['sort'], $selectedQuerySettings['sort.']);
 			$filters = GeneralUtility::trimExplode('|', $this->configurationManager->getContentObject()->cObjGetSingle($selectedQuerySettings['fq'], $selectedQuerySettings['fq.']), TRUE);
 
-			$resultDocumentsCount = $this->searchService->search($queryString, $filters, $queryFields, $sorting, $selectedQuerySettings['maxResults'], $allowedSites);
+			$this->searchService->buildQuery($queryString, $filters, $queryFields, $sorting, $selectedQuerySettings['maxResults'], $allowedSites);
+
+			$query = $this->searchService->getQuery();
+
+			if (isset($selectedQuerySettings['returnFields']) && $selectedQuerySettings['returnFields']) {
+				$returnFields = isset($selectedQuerySettings['returnFields.']) ? $this->configurationManager->getContentObject()->stdWrap($selectedQuerySettings['returnFields'], $selectedQuerySettings['returnFields.']) : $selectedQuerySettings['returnFields'];
+				$query->setFieldList($returnFields);
+			}
+
+			if (isset($selectedQuerySettings['grouping']) && $selectedQuerySettings['grouping']) {
+
+				$query->setGrouping(TRUE);
+
+				$groupField = $this->configurationManager->getContentObject()->cObjGetSingle($selectedQuerySettings['grouping.']['fields'], $selectedQuerySettings['grouping.']['fields.']);
+				$query->addGroupField($groupField);
+
+				if (isset($selectedQuerySettings['grouping.']['numberOfResultsPerGroup']) && $selectedQuerySettings['grouping.']['numberOfResultsPerGroup']) {
+					$numberOfResultsPerGroup = $this->configurationManager->getContentObject()->cObjGetSingle($selectedQuerySettings['grouping.']['numberOfResultsPerGroup'], $selectedQuerySettings['grouping.']['numberOfResultsPerGroup.']);
+					$query->setNumberOfResultsPerGroup($numberOfResultsPerGroup);
+				}
+			}
+
+			$resultDocumentsCount = $this->searchService->search();
+			$isGroupResult = FALSE;
 
 			if ($resultDocumentsCount !== NULL && $resultDocumentsCount > 0) {
-				$resultDocuments = $this->searchService->getResultDocuments();
+				if ($this->searchService->isGroupQuery()) {
+					$isGroupResult = TRUE;
+					$resultDocuments = $this->searchService->getGroupedDocuments();
+				} else {
+					$resultDocuments = $this->searchService->getResultDocuments();
+				}
+
 
 				if (!empty($selectedQuerySettings['filterResults.'])) {
 					$this->searchService->filterResults($resultDocuments, $selectedQuerySettings['filterResults.']);
@@ -110,10 +139,20 @@ class SearchController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 		// reassign rewritten settings
 		$this->view->assign('settings', $this->settings);
 
+		$this->view->assign('isGroupResult', $isGroupResult);
+
 		$this->view->assign('resultDocumentsCount', $resultDocumentsCount);
 		$this->view->assign('resultDocuments', $resultDocuments);
 
 		$this->view->setTemplatePathAndFilename($templatePath);
+
+		if (isset($this->settings['partialRootPath'])) {
+			$partialRootPath = isset($this->settings['partialRootPath.']) ? $this->configurationManager->getContentObject()->stdWrap($this->settings['partialRootPath'], $this->settings['partialRootPath.']) : $this->settings['partialRootPath'];
+			if ($partialRootPath) {
+				$partialRootPath = GeneralUtility::getFileAbsFileName($partialRootPath);
+				$this->view->setPartialRootPath($partialRootPath);
+			}
+		}
 	}
 
 

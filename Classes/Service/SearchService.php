@@ -39,6 +39,11 @@ class SearchService implements \TYPO3\CMS\Core\SingletonInterface {
 	protected $search;
 
 	/**
+	 * @var \tx_solr_Query
+	 */
+	protected $query;
+
+	/**
 	 * Determines whether the solr server is available or not.
 	 *
 	 * @var boolean
@@ -59,6 +64,10 @@ class SearchService implements \TYPO3\CMS\Core\SingletonInterface {
 		$this->configurationManager = $configurationManager;
 	}
 
+	public function reset() {
+		$this->query = NULL;
+	}
+
 	/**
 	 * @param string $keywords
 	 * @param array $filters
@@ -66,13 +75,17 @@ class SearchService implements \TYPO3\CMS\Core\SingletonInterface {
 	 * @param string $sorting
 	 * @return boolean
 	 */
-	public function search($keywords, array $filters = array(), $queryFields = '', $sorting = '', $resultsPerPage = 10,  $allowedSites = '') {
+	public function buildQuery($keywords, array $filters = array(), $queryFields = '', $sorting = '', $resultsPerPage = 10,  $allowedSites = '') {
 
 		$this->initializeSearch();
 
 		if (!$this->solrAvailable) {
 			// early return;
 			return NULL;
+		}
+
+		if ($this->query !== NULL) {
+			throw new Exception('Call reset first!');
 		}
 
 		if ($queryFields) {
@@ -98,9 +111,6 @@ class SearchService implements \TYPO3\CMS\Core\SingletonInterface {
 
 		$query->setUserAccessGroups(explode(',', $GLOBALS['TSFE']->gr_list));
 
-		// must generate default endtime, @see http://forge.typo3.org/issues/44276
-		$query->addFilter('(endtime:[NOW/MINUTE TO *] OR endtime:"' . \tx_solr_Util::timestampToIso(0) . '")');
-
 		if ($queryFields) {
 			$query->setQueryFieldsFromString($queryFields);
 		}
@@ -115,12 +125,62 @@ class SearchService implements \TYPO3\CMS\Core\SingletonInterface {
 
 		$query->setResultsPerPage($resultsPerPage);
 
-		$this->search->search($query, 0, NULL);
+		$this->query = $query;
 
-		$results = $this->search->getNumberOfResults();
+		return $this;
+	}
+
+	public function getQuery() {
+		return $this->query;
+	}
+
+	public function search() {
+
+		$this->search->search($this->query, 0, NULL);
+
+		if ($this->isGroupQuery()) {
+			$groupField = $this->getGroupField();
+			$response = $this->search->getResponse();
+			$results = $response->grouped->$groupField->matches;
+		} else {
+			$results = $this->search->getNumberOfResults();
+		}
 
 		return $results;
+	}
 
+	public function isGroupQuery() {
+		return count($this->query->getGroupFields());
+	}
+
+	public function getGroupField() {
+		return current($this->query->getGroupFields());
+	}
+
+	public function getGroupedDocuments() {
+		$response = $this->search->getResponse();
+		$groupField = $this->getGroupField();
+		$groups = $response->grouped->$groupField->groups;
+		$resultGroups = array();
+		$groupValues = array();
+		foreach ($groups as $group) {
+			$resultGroup = array();
+			$groupValues[] = $group->groupValue;
+			$resultGroup['groupValue'] = $group->groupValue;
+
+			$resultDocuments  = array();
+			$responseDocuments = $this->parseDocuments($group->doclist->docs);
+
+			foreach ($responseDocuments as $responseDocument) {
+				$temporaryResultDocument = $this->processDocumentFieldsToArray($responseDocument);
+				//$resultDocuments[] = $this->renderDocumentFields($temporaryResultDocument);
+				$resultDocuments[] = $temporaryResultDocument;
+			}
+			$resultGroup['resultDocuments'] = $resultDocuments;
+			$resultGroups['groups'][] = $resultGroup;
+		}
+		$resultGroups['groupValues'] = $groupValues;
+		return $resultGroups;
 	}
 
 	/**
@@ -130,8 +190,8 @@ class SearchService implements \TYPO3\CMS\Core\SingletonInterface {
 		$responseDocuments = $this->search->getResultDocuments();
 		$resultDocuments  = array();
 
-		foreach ($responseDocuments as $resultDocument) {
-			$temporaryResultDocument = $this->processDocumentFieldsToArray($resultDocument);
+		foreach ($responseDocuments as $responseDocument) {
+			$temporaryResultDocument = $this->processDocumentFieldsToArray($responseDocument);
 
 			//$resultDocuments[] = $this->renderDocumentFields($temporaryResultDocument);
 			$resultDocuments[] = $temporaryResultDocument;
@@ -140,6 +200,8 @@ class SearchService implements \TYPO3\CMS\Core\SingletonInterface {
 
 		return $resultDocuments;
 	}
+
+
 
 	public function filterResults(&$results, $filters) {
 
@@ -251,6 +313,31 @@ class SearchService implements \TYPO3\CMS\Core\SingletonInterface {
 		}
 
 		return $result;
+	}
+
+	/**
+	 * @param array $documents
+	 */
+	protected function parseDocuments(array $documents) {
+		$parsedDocuments = array();
+
+		foreach ($documents as $originalDocument) {
+
+			$document = new \Apache_Solr_Document();
+			foreach ($originalDocument as $key => $value) {
+
+				//If a result is an array with only a single
+				//value then its nice to be able to access
+				//it as if it were always a single value
+				if (is_array($value) && count($value) <= 1) {
+					$value = array_shift($value);
+				}
+				$document->$key = $value;
+			}
+			$parsedDocuments[] = $document;
+		}
+
+		return $parsedDocuments;
 	}
 
 }
