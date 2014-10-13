@@ -96,6 +96,7 @@ class SearchController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 
 			$this->searchService->buildQuery($queryString, $filters, $queryFields, $sorting, $selectedQuerySettings['maxResults'], $allowedSites);
 
+			$facetFields = array();
 			$query = $this->searchService->getQuery();
 
 			if (isset($selectedQuerySettings['returnFields']) && $selectedQuerySettings['returnFields']) {
@@ -115,6 +116,22 @@ class SearchController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 					$query->setNumberOfResultsPerGroup($numberOfResultsPerGroup);
 				}
 			}
+
+			if (isset($selectedQuerySettings['faceting']) && $selectedQuerySettings['faceting']) {
+				$query->setFaceting();
+
+				$facetFields =  GeneralUtility::trimExplode('|', isset($selectedQuerySettings['faceting.']['fields.']) ? $this->configurationManager->getContentObject()->cObjGetSingle($selectedQuerySettings['faceting.']['fields'], $selectedQuerySettings['faceting.']['fields.']) : $selectedQuerySettings['faceting.']['fields']);
+				$query->setFacetFields($facetFields);
+
+			}
+
+			if (isset($selectedQuerySettings['addQueryParameter.']) && $selectedQuerySettings['addQueryParameter.']) {
+				foreach ($selectedQuerySettings['addQueryParameter.'] as $addQueryParameter) {
+					$query->addQueryParameter($addQueryParameter['name'], $addQueryParameter['value']);
+				}
+
+			}
+
 
 			$resultDocumentsCount = $this->searchService->search();
 			$isGroupResult = FALSE;
@@ -143,6 +160,14 @@ class SearchController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 
 		$this->view->assign('resultDocumentsCount', $resultDocumentsCount);
 		$this->view->assign('resultDocuments', $resultDocuments);
+
+		if (count($facetFields)) {
+			$facetResults = array();
+			foreach ($facetFields as $facetField) {
+				$facetResults[$facetField] = $this->searchService->getFacetFieldsResult($facetField);
+			}
+			$this->view->assign('facetResults', $facetResults);
+		}
 
 		$this->view->setTemplatePathAndFilename($templatePath);
 

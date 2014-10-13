@@ -183,6 +183,15 @@ class SearchService implements \TYPO3\CMS\Core\SingletonInterface {
 		return $resultGroups;
 	}
 
+	public function getFacetFieldsResult($facetField) {
+		$result = NULL;
+		$response = $this->search->getResponse();
+		if (isset($response->facet_counts->facet_fields->$facetField)){
+			$result = (array)$response->facet_counts->facet_fields->$facetField;
+		}
+		return $result;
+	}
+
 	/**
 	 * @return array
 	 */
