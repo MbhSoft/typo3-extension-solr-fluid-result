@@ -76,6 +76,9 @@ class SearchController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 		if (isset($this->settings[$selectedTemplateLayout])) {
 			ArrayUtility::mergeRecursiveWithOverrule($this->settings, $this->settings[$selectedTemplateLayout]);
 		}
+		if (isset($this->settings[$selectedQuerySetting])) {
+			ArrayUtility::mergeRecursiveWithOverrule($this->settings, $this->settings[$selectedQuerySetting]);
+		}
 
 		$templatePath = \TYPO3\CMS\Core\Utility\GeneralUtility::getFileAbsFileName($this->settings['templateLayouts'][$selectedTemplateLayout]);
 
