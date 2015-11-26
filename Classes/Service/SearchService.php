@@ -32,14 +32,14 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class SearchService implements \TYPO3\CMS\Core\SingletonInterface {
 
 	/**
-	 * an instance of \tx_solr_Search
+	 * an instance of \ApacheSolrForTypo3\Solr\Search
 	 *
-	 * @var \tx_solr_Search
+	 * @var \ApacheSolrForTypo3\Solr\Search
 	 */
 	protected $search;
 
 	/**
-	 * @var \tx_solr_Query
+	 * @var \ApacheSolrForTypo3\Solr\Query
 	 */
 	protected $query;
 
@@ -93,8 +93,8 @@ class SearchService implements \TYPO3\CMS\Core\SingletonInterface {
 			$GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_solr.']['search.']['query.']['fields'] = '';
 		}
 
-		/** @var \tx_solr_Query */
-		$query = GeneralUtility::makeInstance('tx_solr_Query', '');
+		/** @var \ApacheSolrForTypo3\Solr\Query */
+		$query = GeneralUtility::makeInstance('ApacheSolrForTypo3\\Solr\\Query', '');
 
 		$query->setQueryString($keywords);
 		$query->useRawQueryString(TRUE);
@@ -104,7 +104,7 @@ class SearchService implements \TYPO3\CMS\Core\SingletonInterface {
 		}
 		$allowedSites = str_replace(
 			'__solr_current_site',
-			\tx_solr_Site::getSiteByPageId($GLOBALS['TSFE']->id)->getDomain(),
+			\ApacheSolrForTypo3\Solr\Site::getSiteByPageId($GLOBALS['TSFE']->id)->getDomain(),
 			$allowedSites
 		);
 		$query->setSiteHashFilter($allowedSites);
@@ -254,14 +254,14 @@ class SearchService implements \TYPO3\CMS\Core\SingletonInterface {
 	 */
 	protected function initializeSearch() {
 
-		$solrConnection = GeneralUtility::makeInstance('tx_solr_ConnectionManager')->getConnectionByPageId(
+		$solrConnection = GeneralUtility::makeInstance('ApacheSolrForTypo3\\Solr\\ConnectionManager')->getConnectionByPageId(
 			$GLOBALS['TSFE']->id,
 			$GLOBALS['TSFE']->sys_language_uid,
 			$GLOBALS['TSFE']->MP
 		);
 
-		/** @var \tx_solr_Search */
-		$this->search = GeneralUtility::makeInstance('tx_solr_Search', $solrConnection);
+		/** @var \ApacheSolrForTypo3\Solr\Search */
+		$this->search = GeneralUtility::makeInstance('ApacheSolrForTypo3\\Solr\\Search', $solrConnection);
 		$this->solrAvailable = $this->search->ping();
 	}
 
