@@ -205,17 +205,10 @@ class SearchService implements \TYPO3\CMS\Core\SingletonInterface
      */
     public function getResultDocuments()
     {
-        $responseDocuments = $this->search->getResultDocuments();
-        $resultDocuments  = [];
+        $response = $this->search->getResponse();
+        $parsedData = $response->getParsedData();
 
-        foreach ($responseDocuments as $responseDocument) {
-            $temporaryResultDocument = $this->processDocumentFieldsToArray($responseDocument);
-
-            //$resultDocuments[] = $this->renderDocumentFields($temporaryResultDocument);
-            $resultDocuments[] = $temporaryResultDocument;
-        }
-
-        return $resultDocuments;
+        return $parsedData->response->docs;
     }
 
 
