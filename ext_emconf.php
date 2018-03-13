@@ -32,7 +32,7 @@ $EM_CONF[$_EXTKEY] = [
     'version' => '1.0.0-dev',
     'constraints' => [
         'depends' => [
-            'solr' => '3.0.0'
+            'solr' => ''
         ],
         'conflicts' => [
         ],
