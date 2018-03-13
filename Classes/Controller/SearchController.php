@@ -24,6 +24,9 @@ namespace MbhSoftware\SolrFluidResult\Controller;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use ApacheSolrForTypo3\Solr\Domain\Search\Query\ParameterBuilder\Faceting;
+use ApacheSolrForTypo3\Solr\Domain\Search\Query\ParameterBuilder\Grouping;
+use ApacheSolrForTypo3\Solr\Domain\Search\Query\ParameterBuilder\ReturnFields;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
 
@@ -102,30 +105,34 @@ class SearchController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
             $this->searchService->buildQuery($queryString, $filters, $queryFields, $sorting, $selectedQuerySettings['maxResults'], $allowedSites);
 
             $facetFields = [];
+            /** @var \ApacheSolrForTypo3\Solr\Domain\Search\Query\Query $query */
             $query = $this->searchService->getQuery();
 
             if (isset($selectedQuerySettings['returnFields']) && $selectedQuerySettings['returnFields']) {
                 $returnFields = isset($selectedQuerySettings['returnFields.']) ? $this->configurationManager->getContentObject()->stdWrap($selectedQuerySettings['returnFields'], $selectedQuerySettings['returnFields.']) : $selectedQuerySettings['returnFields'];
-                $query->setFieldList($returnFields);
+                $returnFieldsArray = GeneralUtility::trimExplode(',', $returnFields);
+                $query->setReturnFields(ReturnFields::fromArray($returnFieldsArray));
             }
 
             if (isset($selectedQuerySettings['grouping']) && $selectedQuerySettings['grouping']) {
-                $query->setGrouping(true);
+                $grouping = new Grouping(true);
+                $query->setGrouping($grouping);
 
                 $groupField = $this->configurationManager->getContentObject()->cObjGetSingle($selectedQuerySettings['grouping.']['fields'], $selectedQuerySettings['grouping.']['fields.']);
-                $query->addGroupField($groupField);
+                $query->getGrouping()->addField($groupField);
 
                 if (isset($selectedQuerySettings['grouping.']['numberOfResultsPerGroup']) && $selectedQuerySettings['grouping.']['numberOfResultsPerGroup']) {
                     $numberOfResultsPerGroup = $this->configurationManager->getContentObject()->cObjGetSingle($selectedQuerySettings['grouping.']['numberOfResultsPerGroup'], $selectedQuerySettings['grouping.']['numberOfResultsPerGroup.']);
-                    $query->setNumberOfResultsPerGroup($numberOfResultsPerGroup);
+                    $query->getGrouping()->setResultsPerGroup($numberOfResultsPerGroup);
                 }
             }
 
             if (isset($selectedQuerySettings['faceting']) && $selectedQuerySettings['faceting']) {
-                $query->setFaceting();
+                $faceting = new Faceting(true);
+                $query->setFaceting($faceting);
 
                 $facetFields =  GeneralUtility::trimExplode('|', isset($selectedQuerySettings['faceting.']['fields.']) ? $this->configurationManager->getContentObject()->cObjGetSingle($selectedQuerySettings['faceting.']['fields'], $selectedQuerySettings['faceting.']['fields.']) : $selectedQuerySettings['faceting.']['fields']);
-                $query->setFacetFields($facetFields);
+                $query->getFaceting()->setFields($facetFields);
             }
 
             if (isset($selectedQuerySettings['addQueryParameter.']) && $selectedQuerySettings['addQueryParameter.']) {
@@ -177,7 +184,7 @@ class SearchController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
             $partialRootPath = isset($this->settings['partialRootPath.']) ? $this->configurationManager->getContentObject()->stdWrap($this->settings['partialRootPath'], $this->settings['partialRootPath.']) : $this->settings['partialRootPath'];
             if ($partialRootPath) {
                 $partialRootPath = GeneralUtility::getFileAbsFileName($partialRootPath);
-                $this->view->setPartialRootPath($partialRootPath);
+                $this->view->setPartialRootPaths([$partialRootPath]);
             }
         }
     }

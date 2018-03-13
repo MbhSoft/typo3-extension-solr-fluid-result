@@ -24,6 +24,11 @@ namespace MbhSoftware\SolrFluidResult\Service;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use ApacheSolrForTypo3\Solr\ConnectionManager;
+use ApacheSolrForTypo3\Solr\Domain\Search\Query\QueryBuilder;
+use ApacheSolrForTypo3\Solr\Domain\Search\Query\ParameterBuilder\QueryFields;
+use ApacheSolrForTypo3\Solr\Domain\Site\SiteHashService;
+use ApacheSolrForTypo3\Solr\Search;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -40,7 +45,7 @@ class SearchService implements \TYPO3\CMS\Core\SingletonInterface
     protected $search;
 
     /**
-     * @var \ApacheSolrForTypo3\Solr\Query
+     * @var \ApacheSolrForTypo3\Solr\Domain\Search\Query\Query
      */
     protected $query;
 
@@ -82,85 +87,80 @@ class SearchService implements \TYPO3\CMS\Core\SingletonInterface
     {
         $this->initializeSearch();
 
-        if (!$this->solrAvailable) {
-            // early return;
-            return null;
-        }
-
         if ($this->query !== null) {
-            throw new Exception('Call reset first!');
+            throw new \Exception('Call reset first!');
         }
-
-        if ($queryFields) {
-            // reset default query fields before making instance of query
-            $GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_solr.']['search.']['query.']['fields'] = '';
-        }
-
-        /** @var \ApacheSolrForTypo3\Solr\Query */
-        $query = GeneralUtility::makeInstance('ApacheSolrForTypo3\\Solr\\Query', '');
-
-        $query->setQueryString($keywords);
-        $query->useRawQueryString(true);
 
         if ($allowedSites === '') {
             $allowedSites = '__solr_current_site';
         }
-        $allowedSites = str_replace(
-            '__solr_current_site',
-            \ApacheSolrForTypo3\Solr\Site::getSiteByPageId($GLOBALS['TSFE']->id)->getDomain(),
-            $allowedSites
-        );
-        $query->setSiteHashFilter($allowedSites);
+        /** @var SiteHashService $siteHashService */
+        $siteHashService = GeneralUtility::makeInstance(SiteHashService::class);
+        $allowedSites = $siteHashService->getAllowedSitesForPageIdAndAllowedSitesConfiguration($GLOBALS['TSFE']->id, $allowedSites);
 
-        $query->setUserAccessGroups(explode(',', $GLOBALS['TSFE']->gr_list));
+        /** @var QueryBuilder $queryBuilder */
+        $queryBuilder = GeneralUtility::makeInstance(QueryBuilder::class);
+        $queryBuilder->newSearchQuery('')
+            ->useQueryString($keywords)
+            ->useRawQueryString()
+            ->useSiteHashFromAllowedSites($allowedSites)
+            ->useUserAccessGroups(explode(',', $GLOBALS['TSFE']->gr_list));
 
         if ($queryFields) {
-            $query->setQueryFieldsFromString($queryFields);
-        }
-
-        foreach ($filters as $filter) {
-            $query->addFilter($filter);
+            $queryBuilder->useQueryFields(QueryFields::fromString($queryFields));
         }
 
         if ($sorting && preg_match('/^([a-z0-9_]+ (asc|desc)[, ]*)*([a-z0-9_]+ (asc|desc))+$/i', $sorting)) {
-            $query->setSorting($sorting);
+            $queryBuilder->useSorting($sorting);
         }
 
-        $query->setResultsPerPage($resultsPerPage);
+        $queryBuilder->useFilterArray($filters);
+        $queryBuilder->useResultsPerPage($resultsPerPage);
 
-        $this->query = $query;
+        $this->query = $queryBuilder->getQuery();
 
         return $this;
     }
 
+    /**
+     * @return \ApacheSolrForTypo3\Solr\Domain\Search\Query\Query
+     */
     public function getQuery()
     {
         return $this->query;
     }
 
+    /**
+     * Do a search - returns the number of results
+     *
+     * @return int|null
+     */
     public function search()
     {
-        $this->search->search($this->query, 0, null);
+        try {
+            $this->search->search($this->query, 0, null);
 
-        if ($this->isGroupQuery()) {
-            $groupField = $this->getGroupField();
-            $response = $this->search->getResponse();
-            $results = $response->grouped->$groupField->matches;
-        } else {
-            $results = $this->search->getNumberOfResults();
+            if ($this->isGroupQuery()) {
+                $groupField = $this->getGroupField();
+                $response = $this->search->getResponse();
+                $results = $response->grouped->$groupField->matches;
+            } else {
+                $results = $this->search->getNumberOfResults();
+            }
+        } catch(\Exception $e) {
+            $results = null;
         }
-
         return $results;
     }
 
     public function isGroupQuery()
     {
-        return count($this->query->getGroupFields());
+        return count($this->query->getGrouping()->getFields());
     }
 
     public function getGroupField()
     {
-        return current($this->query->getGroupFields());
+        return current($this->query->getGrouping()->getFields());
     }
 
     public function getGroupedDocuments()
@@ -262,15 +262,13 @@ class SearchService implements \TYPO3\CMS\Core\SingletonInterface
      */
     protected function initializeSearch()
     {
-        $solrConnection = GeneralUtility::makeInstance('ApacheSolrForTypo3\\Solr\\ConnectionManager')->getConnectionByPageId(
+        $solrConnection = GeneralUtility::makeInstance(ConnectionManager::class)->getConnectionByPageId(
             $GLOBALS['TSFE']->id,
-            $GLOBALS['TSFE']->sys_language_uid,
-            $GLOBALS['TSFE']->MP
+            $GLOBALS['TSFE']->sys_language_uid
         );
 
-        /** @var \ApacheSolrForTypo3\Solr\Search */
-        $this->search = GeneralUtility::makeInstance('ApacheSolrForTypo3\\Solr\\Search', $solrConnection);
-        $this->solrAvailable = $this->search->ping();
+        /** @var Search */
+        $this->search = GeneralUtility::makeInstance(Search::class, $solrConnection);
     }
 
     /**

@@ -24,6 +24,8 @@ namespace MbhSoftware\SolrFluidResult\Hooks;
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
 
+use TYPO3\CMS\Backend\Form\FormDataProvider\TcaSelectItems;
+
 /**
  *
  */
@@ -33,16 +35,21 @@ class ItemsProcFunc
     /**
      * Itemsproc function to extend the selection of templateLayouts in the plugin
      *
-     * @param array &$config configuration array
-     * @param \TYPO3\CMS\Backend\Form\FormEngine $parentObject parent object
+     * @param array &$processorParameters configuration array
+     * @param TcaSelectItems $parentObject parent object
      * @return void
      */
-    public function addTemplateLayouts(array &$config, \TYPO3\CMS\Backend\Form\FormEngine $parentObject)
+    public function addTemplateLayouts(array &$processorParameters, TcaSelectItems $parentObject)
     {
+        if (!empty($processorParameters['flexParentDatabaseRow']['pid'])) {
+            $row = $processorParameters['flexParentDatabaseRow'];
+        } else {
+            $row = $processorParameters['row'];
+        }
 
             // Add tsconfig values
-        if (is_numeric($config['row']['pid'])) {
-            $pagesTsConfig = \TYPO3\CMS\Backend\Utility\BackendUtility::getPagesTSconfig($config['row']['pid']);
+        if (is_numeric($row['pid'])) {
+            $pagesTsConfig = \TYPO3\CMS\Backend\Utility\BackendUtility::getPagesTSconfig($row['pid']);
             if (isset($pagesTsConfig['tx_solrfluidresult.']['templateLayouts.']) && is_array($pagesTsConfig['tx_solrfluidresult.']['templateLayouts.'])) {
 
                     // Add every item
@@ -51,7 +58,7 @@ class ItemsProcFunc
                         $GLOBALS['LANG']->sL($label, true),
                         $key
                     ];
-                    array_push($config['items'], $additionalLayout);
+                    array_push($processorParameters['items'], $additionalLayout);
                 }
             }
         }
@@ -60,16 +67,20 @@ class ItemsProcFunc
     /**
      * Itemsproc function to extend the selection of templateLayouts in the plugin
      *
-     * @param array &$config configuration array
-     * @param \TYPO3\CMS\Backend\Form\FormEngine $parentObject parent object
+     * @param array &$processorParameters configuration array
+     * @param TcaSelectItems $parentObject parent object
      * @return void
      */
-    public function addQuerySettings(array &$config, \TYPO3\CMS\Backend\Form\FormEngine $parentObject)
+    public function addQuerySettings(array &$processorParameters, TcaSelectItems $parentObject)
     {
-
+        if (!empty($processorParameters['flexParentDatabaseRow']['pid'])) {
+            $row = $processorParameters['flexParentDatabaseRow'];
+        } else {
+            $row = $processorParameters['row'];
+        }
             // Add tsconfig values
-        if (is_numeric($config['row']['pid'])) {
-            $pagesTsConfig = \TYPO3\CMS\Backend\Utility\BackendUtility::getPagesTSconfig($config['row']['pid']);
+        if (is_numeric($row['pid'])) {
+            $pagesTsConfig = \TYPO3\CMS\Backend\Utility\BackendUtility::getPagesTSconfig($row['pid']);
             if (isset($pagesTsConfig['tx_solrfluidresult.']['querySettings.']) && is_array($pagesTsConfig['tx_solrfluidresult.']['querySettings.'])) {
 
                     // Add every item
@@ -78,7 +89,7 @@ class ItemsProcFunc
                         $GLOBALS['LANG']->sL($label, true),
                         $key
                     ];
-                    array_push($config['items'], $additionalLayout);
+                    array_push($processorParameters['items'], $additionalLayout);
                 }
             }
         }
