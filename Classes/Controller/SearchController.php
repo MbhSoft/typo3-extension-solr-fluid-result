@@ -125,6 +125,10 @@ class SearchController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
                     $numberOfResultsPerGroup = $this->configurationManager->getContentObject()->cObjGetSingle($selectedQuerySettings['grouping.']['numberOfResultsPerGroup'], $selectedQuerySettings['grouping.']['numberOfResultsPerGroup.']);
                     $query->getGrouping()->setResultsPerGroup($numberOfResultsPerGroup);
                 }
+                if (isset($selectedQuerySettings['grouping.']['numberOfGroups']) && $selectedQuerySettings['grouping.']['numberOfGroups']) {
+                    $numberOfGroups = $this->configurationManager->getContentObject()->cObjGetSingle($selectedQuerySettings['grouping.']['numberOfGroups'], $selectedQuerySettings['grouping.']['numberOfResultsPerGroup.']);
+                    $query->getGrouping()->setNumberOfGroups($numberOfGroups);
+                }
             }
 
             if (isset($selectedQuerySettings['faceting']) && $selectedQuerySettings['faceting']) {
