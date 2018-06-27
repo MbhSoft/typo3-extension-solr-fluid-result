@@ -25,8 +25,10 @@ namespace MbhSoftware\SolrFluidResult\Service;
  ***************************************************************/
 
 use ApacheSolrForTypo3\Solr\ConnectionManager;
-use ApacheSolrForTypo3\Solr\Domain\Search\Query\QueryBuilder;
 use ApacheSolrForTypo3\Solr\Domain\Search\Query\ParameterBuilder\QueryFields;
+use ApacheSolrForTypo3\Solr\Domain\Search\Query\QueryBuilder;
+use ApacheSolrForTypo3\Solr\Domain\Search\ResultSet\Result\SearchResultBuilder;
+use ApacheSolrForTypo3\Solr\Domain\Search\ResultSet\Result\SearchResultCollection;
 use ApacheSolrForTypo3\Solr\Domain\Site\SiteHashService;
 use ApacheSolrForTypo3\Solr\Search;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -61,6 +63,10 @@ class SearchService implements \TYPO3\CMS\Core\SingletonInterface
      */
     protected $configurationManager;
 
+    /**
+     * @var SearchResultBuilder
+     */
+    protected $searchResultBuilder;
 
     /**
      * @param \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface $configurationManager
@@ -70,6 +76,15 @@ class SearchService implements \TYPO3\CMS\Core\SingletonInterface
     {
         $this->configurationManager = $configurationManager;
     }
+
+    /**
+     * AbstractResultParser constructor.
+     * @param SearchResultBuilder|null $resultBuilder
+     */
+    public function __construct(SearchResultBuilder $resultBuilder = null) {
+        $this->searchResultBuilder = is_null($resultBuilder) ? GeneralUtility::makeInstance(SearchResultBuilder::class) : $resultBuilder;
+    }
+
 
     public function reset()
     {
@@ -175,15 +190,10 @@ class SearchService implements \TYPO3\CMS\Core\SingletonInterface
             $groupValues[] = $group->groupValue;
             $resultGroup['groupValue'] = $group->groupValue;
 
-            $resultDocuments  = [];
-            $responseDocuments = $this->parseDocuments($group->doclist->docs);
+            $resultDocuments = $this->parseDocuments($group->doclist->docs);
+            $searchResult = $this->getSearchResultCollection($resultDocuments);
 
-            foreach ($responseDocuments as $responseDocument) {
-                $temporaryResultDocument = $this->processDocumentFieldsToArray($responseDocument);
-                //$resultDocuments[] = $this->renderDocumentFields($temporaryResultDocument);
-                $resultDocuments[] = $temporaryResultDocument;
-            }
-            $resultGroup['resultDocuments'] = $resultDocuments;
+            $resultGroup['resultDocuments'] = $searchResult;
             $resultGroups['groups'][] = $resultGroup;
         }
         $resultGroups['groupValues'] = $groupValues;
@@ -207,10 +217,23 @@ class SearchService implements \TYPO3\CMS\Core\SingletonInterface
     {
         $response = $this->search->getResponse();
         $parsedData = $response->getParsedData();
+        $documents = $parsedData->response->docs;
 
-        return $parsedData->response->docs;
+        $searchResults = $this->getSearchResultCollection($documents);
+
+        return $searchResults;
     }
 
+
+    protected function getSearchResultCollection($documents)
+    {
+        $searchResults = GeneralUtility::makeInstance(SearchResultCollection::class);
+        foreach ($documents as $document) {
+            $searchResultObject = $this->searchResultBuilder->fromApacheSolrDocument($document);
+            $searchResults[] = $searchResultObject;
+        }
+        return $searchResults;
+    }
 
 
     public function filterResults(&$results, $filters)
@@ -262,66 +285,6 @@ class SearchService implements \TYPO3\CMS\Core\SingletonInterface
 
         /** @var Search */
         $this->search = GeneralUtility::makeInstance(Search::class, $solrConnection);
-    }
-
-    /**
-     * takes a search result document and processes its fields according to the
-     * instructions configured in TS. Currently available instructions are
-     *    * timestamp - converts a date field into a unix timestamp
-     *    * serialize - uses serialize() to encode multivalue fields which then can be put out using the MULTIVALUE view helper
-     *    * skip - skips the whole field so that it is not available in the result, usefull for the spell field f.e.
-     * The default is to do nothing and just add the document's field to the
-     * resulting array.
-     *
-     * @param \Apache_Solr_Document $document the Apache_Solr_Document result document
-     * @return    array    An array with field values processed like defined in TS
-     */
-    protected function processDocumentFieldsToArray(\Apache_Solr_Document $document)
-    {
-        $processingInstructions = $GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_solr.']['search.']['results.']['fieldProcessingInstructions.'];
-        $availableFields = $document->getFieldNames();
-        $result = [];
-
-        foreach ($availableFields as $fieldName) {
-            $processingInstruction = $processingInstructions[$fieldName];
-
-            // TODO switch to field processors
-            // TODO allow to have multiple (commaseparated) instructions for each field
-            switch ($processingInstruction) {
-                case 'timestamp':
-                    // FIXME use DateTime::createFromFormat (PHP 5.3+)
-                    $parsedTime = strptime($document->{$fieldName}, '%Y-%m-%dT%H:%M:%SZ');
-
-                    $processedFieldValue = mktime(
-                        $parsedTime['tm_hour'],
-                        $parsedTime['tm_min'],
-                        $parsedTime['tm_sec'],
-                        // strptime returns the "Months since January (0-11)"
-                        // while mktime expects the month to be a value
-                        // between 1 and 12. Adding 1 to solve the problem
-                        $parsedTime['tm_mon'] + 1,
-                        $parsedTime['tm_mday'],
-                        // strptime returns the "Years since 1900"
-                        $parsedTime['tm_year'] + 1900
-                    );
-                    break;
-                case 'serialize':
-                    if (!empty($document->{$fieldName})) {
-                        $processedFieldValue = serialize($document->{$fieldName});
-                    } else {
-                        $processedFieldValue = '';
-                    }
-                    break;
-                case 'skip':
-                    continue 2;
-                default:
-                    $processedFieldValue = $document->{$fieldName};
-            }
-
-            $result[$fieldName] = $processedFieldValue;
-        }
-
-        return $result;
     }
 
     /**
