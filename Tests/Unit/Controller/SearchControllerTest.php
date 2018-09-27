@@ -33,7 +33,11 @@ class SearchControllerTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCas
      */
     public function buildFilterStringFromCategoryFilterItemsCreatesCorrectString($filterItems, $expectedString)
     {
-        $result = $this->searchController->_call('buildFilterStringFromCategoryFilterItems', $filterItems, 'categories_stringM');
+        $result = $this->searchController->_call(
+            'buildFilterStringFromCategoryFilterItems',
+            $filterItems,
+            'categories_stringM'
+        );
         $this->assertSame($expectedString, $result);
     }
 
@@ -115,7 +119,4 @@ class SearchControllerTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCas
             ],
         ];
     }
-
-
-
 }

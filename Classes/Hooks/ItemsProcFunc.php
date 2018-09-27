@@ -51,7 +51,6 @@ class ItemsProcFunc
         if (is_numeric($row['pid'])) {
             $pagesTsConfig = \TYPO3\CMS\Backend\Utility\BackendUtility::getPagesTSconfig($row['pid']);
             if (isset($pagesTsConfig['tx_solrfluidresult.']['templateLayouts.']) && is_array($pagesTsConfig['tx_solrfluidresult.']['templateLayouts.'])) {
-
                     // Add every item
                 foreach ($pagesTsConfig['tx_solrfluidresult.']['templateLayouts.'] as $key => $label) {
                     $additionalLayout = [
@@ -82,7 +81,6 @@ class ItemsProcFunc
         if (is_numeric($row['pid'])) {
             $pagesTsConfig = \TYPO3\CMS\Backend\Utility\BackendUtility::getPagesTSconfig($row['pid']);
             if (isset($pagesTsConfig['tx_solrfluidresult.']['querySettings.']) && is_array($pagesTsConfig['tx_solrfluidresult.']['querySettings.'])) {
-
                     // Add every item
                 foreach ($pagesTsConfig['tx_solrfluidresult.']['querySettings.'] as $key => $label) {
                     $additionalLayout = [

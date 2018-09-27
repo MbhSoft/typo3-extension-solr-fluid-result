@@ -113,15 +113,26 @@ class SearchController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
                 $allowedSites = $selectedQuerySettings['allowedSites'];
             }
 
-            $queryString = $this->configurationManager->getContentObject()->cObjGetSingle($selectedQuerySettings['q'],
-                $selectedQuerySettings['q.']);
-            $queryFields = $this->configurationManager->getContentObject()->cObjGetSingle($selectedQuerySettings['qf'],
-                $selectedQuerySettings['qf.']);
-            $sorting = $this->configurationManager->getContentObject()->cObjGetSingle($selectedQuerySettings['sort'],
-                $selectedQuerySettings['sort.']);
-            $filters = GeneralUtility::trimExplode('|',
-                $this->configurationManager->getContentObject()->cObjGetSingle($selectedQuerySettings['fq'],
-                    $selectedQuerySettings['fq.']), true);
+            $queryString = $this->configurationManager->getContentObject()->cObjGetSingle(
+                $selectedQuerySettings['q'],
+                $selectedQuerySettings['q.']
+            );
+            $queryFields = $this->configurationManager->getContentObject()->cObjGetSingle(
+                $selectedQuerySettings['qf'],
+                $selectedQuerySettings['qf.']
+            );
+            $sorting = $this->configurationManager->getContentObject()->cObjGetSingle(
+                $selectedQuerySettings['sort'],
+                $selectedQuerySettings['sort.']
+            );
+            $filters = GeneralUtility::trimExplode(
+                '|',
+                $this->configurationManager->getContentObject()->cObjGetSingle(
+                    $selectedQuerySettings['fq'],
+                    $selectedQuerySettings['fq.']
+                ),
+                true
+            );
 
             if (!empty($this->settings['categoryFilterItem'])) {
                 $categoryFilterItem = $this->categoryFilterItemRepository->findByUid($this->settings['categoryFilterItem']);

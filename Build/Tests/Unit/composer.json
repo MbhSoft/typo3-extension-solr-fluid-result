@@ -1,0 +1,25 @@
+{
+    "require": {
+        "typo3/cms": "^8.7.0",
+        "typo3/testing-framework": "^2.0.0",
+        "ircmaxell/random-lib": "^1.2",
+        "symfony/phpunit-bridge": "^4.0"
+    },
+    "config": {
+        "bin-dir": "bin",
+        "platform": {
+            "php": "7.0"
+        }
+    },
+    "autoload": {
+        "classmap": [
+            "Classes"
+        ]
+    },
+    "extra": {
+        "typo3/cms": {
+            "cms-package-dir": "{$vendor-dir}/typo3/cms",
+            "web-dir": "web"
+        }
+    }
+}
