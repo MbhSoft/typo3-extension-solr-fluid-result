@@ -3,8 +3,35 @@
 	<file source-language="en" datatype="plaintext" original="messages" date="2011-10-17T20:22:32Z" product-name="solr_fluid_result">
 		<header/>
 		<body>
-			<trans-unit id="" xml:space="preserve">
-				<source></source>
+			<trans-unit id="tx_solrfluidresult_domain_model_categoryfilteritem" xml:space="preserve">
+				<source>Filter item</source>
+			</trans-unit>
+			<trans-unit id="tx_solrfluidresult_domain_model_categoryfilteritem.title" xml:space="preserve">
+				<source>Title</source>
+			</trans-unit>
+			<trans-unit id="tx_solrfluidresult_domain_model_categoryfilteritem.type" xml:space="preserve">
+				<source>Type</source>
+			</trans-unit>
+			<trans-unit id="tx_solrfluidresult_domain_model_categoryfilteritem.type.I.0" xml:space="preserve">
+				<source>Operator</source>
+			</trans-unit>
+			<trans-unit id="tx_solrfluidresult_domain_model_categoryfilteritem.type.I.1" xml:space="preserve">
+				<source>Categories</source>
+			</trans-unit>
+			<trans-unit id="tx_solrfluidresult_domain_model_categoryfilteritem.operator" xml:space="preserve">
+				<source>Operator</source>
+			</trans-unit>
+			<trans-unit id="tx_solrfluidresult_domain_model_categoryfilteritem.operator.I.0" xml:space="preserve">
+				<source>AND</source>
+			</trans-unit>
+			<trans-unit id="tx_solrfluidresult_domain_model_categoryfilteritem.operator.I.1" xml:space="preserve">
+				<source>OR</source>
+			</trans-unit>
+			<trans-unit id="tx_solrfluidresult_domain_model_categoryfilteritem.items" xml:space="preserve">
+				<source>Items</source>
+			</trans-unit>
+			<trans-unit id="tx_solrfluidresult_domain_model_categoryfilteritem.categories" xml:space="preserve">
+				<source>Categories</source>
 			</trans-unit>
 		</body>
 	</file>

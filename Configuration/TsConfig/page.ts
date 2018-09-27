@@ -1,6 +1,6 @@
 tx_solrfluidresult {
-	templateLayouts {
-	}
-	querySettings {
-	}
+  templateLayouts {
+  }
+  querySettings {
+  }
 }
