@@ -24,7 +24,7 @@
 			<trans-unit id="tx_solrfluidresult_domain_model_categoryfilteritem.operator.I.0" xml:space="preserve">
 				<target state="translated">und</target>
 			</trans-unit>
-			<trans-unit id="tx_solrfluidresult_domain_model_categoryfilteritem.operator.I.0" xml:space="preserve">
+			<trans-unit id="tx_solrfluidresult_domain_model_categoryfilteritem.operator.I.1" xml:space="preserve">
 				<target state="translated">oder</target>
 			</trans-unit>
 			<trans-unit id="tx_solrfluidresult_domain_model_categoryfilteritem.items" xml:space="preserve">
