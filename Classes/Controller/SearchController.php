@@ -150,6 +150,7 @@ class SearchController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
                 $maxResults = $selectedQuerySettings['maxResults'];
             }
 
+            $this->searchService->reset();
             $this->searchService->buildQuery($queryString, $filters, $queryFields, $sorting, $maxResults, $allowedSites);
 
             $facetFields = [];
