@@ -4,8 +4,6 @@ if (!defined('TYPO3_MODE')) {
 }
 
 call_user_func(function () {
-    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::allowTableOnStandardPages('tx_solrfluidresult_domain_model_categoryfilteritem');
-
     \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerPlugin(
         'MbhSoftware.SolrFluidResult',
         'Search',
