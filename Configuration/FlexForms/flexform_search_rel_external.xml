@@ -51,7 +51,7 @@
 					<settings.maximumResults>
 						<TCEforms>
 							<exclude>1</exclude>
-							<label>LLL:EXT:solr_fluid_result/Resources/Private/Language/locallang_be.xlf:flexforms_general.maximumResults</label>
+							<label>Maximum results</label>
 							<config>
 								<type>input</type>
 								<eval>int+</eval>
@@ -61,11 +61,21 @@
 					<settings.categoryFilterItem>
 						<TCEforms>
 							<exclude>1</exclude>
-							<label>LLL:EXT:solr_fluid_result/Resources/Private/Language/locallang_be.xlf:flexforms_general.categoryFilterItem</label>
+							<label>Category filter</label>
 							<config>
-								<type>inline</type>
-								<foreign_table>tx_solrfluidresult_domain_model_categoryfilteritem</foreign_table>
+								<type>group</type>
+								<internal_type>db</internal_type>
+								<allowed>tx_solrfluidresult_domain_model_categoryfilteritem</allowed>
+								<size>1</size>
+								<minitems>1</minitems>
 								<maxitems>1</maxitems>
+								<required>1</required>
+								<wizards>
+									<_PADDING>0</_PADDING>
+									<suggest>
+										<type>suggest</type>
+									</suggest>
+								</wizards>
 							</config>
 						</TCEforms>
 					</settings.categoryFilterItem>
