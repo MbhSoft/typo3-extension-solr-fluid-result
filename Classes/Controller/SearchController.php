@@ -85,11 +85,10 @@ class SearchController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
     /**
      * action index
      *
-     * @return void
+     * @return void|string
      */
     public function indexAction()
     {
-        $resultDocumentsCount = 0;
         $resultDocuments = [];
 
         $selectedQuerySetting = $this->settings['querySetting'];
@@ -104,7 +103,7 @@ class SearchController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 
         $templatePath = \TYPO3\CMS\Core\Utility\GeneralUtility::getFileAbsFileName($this->settings['templateLayouts'][$selectedTemplateLayout]);
 
-        if (isset($this->settings['querySettings'][$selectedQuerySetting]) && $templatePath) {
+        if ($templatePath && !empty($this->settings['querySettings'][$selectedQuerySetting])) {
             $selectedQuerySettings = $this->settings['querySettings'][$selectedQuerySetting];
             $selectedQuerySettings = $this->typoScriptService->convertPlainArrayToTypoScriptArray($selectedQuerySettings);
 
@@ -157,38 +156,38 @@ class SearchController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
             /** @var \ApacheSolrForTypo3\Solr\Domain\Search\Query\Query $query */
             $query = $this->searchService->getQuery();
 
-            if (isset($selectedQuerySettings['returnFields']) && $selectedQuerySettings['returnFields']) {
+            if (!empty($selectedQuerySettings['returnFields']) && $selectedQuerySettings['returnFields']) {
                 $returnFields = isset($selectedQuerySettings['returnFields.']) ? $this->configurationManager->getContentObject()->stdWrap($selectedQuerySettings['returnFields'], $selectedQuerySettings['returnFields.']) : $selectedQuerySettings['returnFields'];
                 $returnFieldsArray = GeneralUtility::trimExplode(',', $returnFields);
                 $query->setReturnFields(ReturnFields::fromArray($returnFieldsArray));
             }
 
-            if (isset($selectedQuerySettings['grouping']) && $selectedQuerySettings['grouping']) {
+            if (!empty($selectedQuerySettings['grouping']) && $selectedQuerySettings['grouping']) {
                 $grouping = new Grouping(true);
                 $query->setGrouping($grouping);
 
                 $groupField = $this->configurationManager->getContentObject()->cObjGetSingle($selectedQuerySettings['grouping.']['fields'], $selectedQuerySettings['grouping.']['fields.']);
                 $query->getGrouping()->addField($groupField);
 
-                if (isset($selectedQuerySettings['grouping.']['numberOfResultsPerGroup']) && $selectedQuerySettings['grouping.']['numberOfResultsPerGroup']) {
+                if (!empty($selectedQuerySettings['grouping.']['numberOfResultsPerGroup']) && $selectedQuerySettings['grouping.']['numberOfResultsPerGroup']) {
                     $numberOfResultsPerGroup = $this->configurationManager->getContentObject()->cObjGetSingle($selectedQuerySettings['grouping.']['numberOfResultsPerGroup'], $selectedQuerySettings['grouping.']['numberOfResultsPerGroup.']);
                     $query->getGrouping()->setResultsPerGroup($numberOfResultsPerGroup);
                 }
-                if (isset($selectedQuerySettings['grouping.']['numberOfGroups']) && $selectedQuerySettings['grouping.']['numberOfGroups']) {
+                if (!empty($selectedQuerySettings['grouping.']['numberOfGroups']) && $selectedQuerySettings['grouping.']['numberOfGroups']) {
                     $numberOfGroups = $this->configurationManager->getContentObject()->cObjGetSingle($selectedQuerySettings['grouping.']['numberOfGroups'], $selectedQuerySettings['grouping.']['numberOfResultsPerGroup.']);
                     $query->getGrouping()->setNumberOfGroups($numberOfGroups);
                 }
             }
 
-            if (isset($selectedQuerySettings['faceting']) && $selectedQuerySettings['faceting']) {
+            if (!empty($selectedQuerySettings['faceting']) && $selectedQuerySettings['faceting']) {
                 $faceting = new Faceting(true);
                 $query->setFaceting($faceting);
 
-                $facetFields =  GeneralUtility::trimExplode('|', isset($selectedQuerySettings['faceting.']['fields.']) ? $this->configurationManager->getContentObject()->cObjGetSingle($selectedQuerySettings['faceting.']['fields'], $selectedQuerySettings['faceting.']['fields.']) : $selectedQuerySettings['faceting.']['fields']);
+                $facetFields =  GeneralUtility::trimExplode('|', !empty($selectedQuerySettings['faceting.']['fields.']) ? $this->configurationManager->getContentObject()->cObjGetSingle($selectedQuerySettings['faceting.']['fields'], $selectedQuerySettings['faceting.']['fields.']) : $selectedQuerySettings['faceting.']['fields']);
                 $query->getFaceting()->setFields($facetFields);
             }
 
-            if (isset($selectedQuerySettings['addQueryParameter.']) && $selectedQuerySettings['addQueryParameter.']) {
+            if (!empty($selectedQuerySettings['addQueryParameter.']) && $selectedQuerySettings['addQueryParameter.']) {
                 foreach ($selectedQuerySettings['addQueryParameter.'] as $addQueryParameter) {
                     $query->addQueryParameter($addQueryParameter['name'], $addQueryParameter['value']);
                 }
@@ -245,6 +244,7 @@ class SearchController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
     /**
      * @param $filterItem
      * @return string
+     * @throws \RuntimeException
      */
     protected function buildFilterStringFromCategoryFilterItems($filterItem, $categoryFilterFieldName)
     {

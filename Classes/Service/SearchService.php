@@ -83,7 +83,7 @@ class SearchService implements \TYPO3\CMS\Core\SingletonInterface
      */
     public function __construct(SearchResultBuilder $resultBuilder = null)
     {
-        $this->searchResultBuilder = is_null($resultBuilder) ? GeneralUtility::makeInstance(SearchResultBuilder::class) : $resultBuilder;
+        $this->searchResultBuilder = $resultBuilder === null ? GeneralUtility::makeInstance(SearchResultBuilder::class) : $resultBuilder;
     }
 
 
@@ -97,6 +97,7 @@ class SearchService implements \TYPO3\CMS\Core\SingletonInterface
      * @param array $filters
      * @param string $queryFields
      * @param string $sorting
+     * @throws \Exception
      * @return boolean
      */
     public function buildQuery($keywords, array $filters = [], $queryFields = '', $sorting = '', $resultsPerPage = 10, $allowedSites = '')
@@ -219,10 +220,7 @@ class SearchService implements \TYPO3\CMS\Core\SingletonInterface
         $response = $this->search->getResponse();
         $parsedData = $response->getParsedData();
         $documents = $parsedData->response->docs;
-
-        $searchResults = $this->getSearchResultCollection($documents);
-
-        return $searchResults;
+        return $this->getSearchResultCollection($documents);
     }
 
 

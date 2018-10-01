@@ -36,10 +36,9 @@ class ItemsProcFunc
      * Itemsproc function to extend the selection of templateLayouts in the plugin
      *
      * @param array &$processorParameters configuration array
-     * @param TcaSelectItems $parentObject parent object
      * @return void
      */
-    public function addTemplateLayouts(array &$processorParameters, TcaSelectItems $parentObject)
+    public function addTemplateLayouts(array &$processorParameters)
     {
         if (!empty($processorParameters['flexParentDatabaseRow']['pid'])) {
             $row = $processorParameters['flexParentDatabaseRow'];
@@ -50,14 +49,14 @@ class ItemsProcFunc
             // Add tsconfig values
         if (is_numeric($row['pid'])) {
             $pagesTsConfig = \TYPO3\CMS\Backend\Utility\BackendUtility::getPagesTSconfig($row['pid']);
-            if (isset($pagesTsConfig['tx_solrfluidresult.']['templateLayouts.']) && is_array($pagesTsConfig['tx_solrfluidresult.']['templateLayouts.'])) {
+            if (isset($pagesTsConfig['tx_solrfluidresult.']['templateLayouts.']) && \is_array($pagesTsConfig['tx_solrfluidresult.']['templateLayouts.'])) {
                     // Add every item
                 foreach ($pagesTsConfig['tx_solrfluidresult.']['templateLayouts.'] as $key => $label) {
                     $additionalLayout = [
                         $GLOBALS['LANG']->sL($label, true),
                         $key
                     ];
-                    array_push($processorParameters['items'], $additionalLayout);
+                    $processorParameters['items'][] = $additionalLayout;
                 }
             }
         }
@@ -67,10 +66,9 @@ class ItemsProcFunc
      * Itemsproc function to extend the selection of templateLayouts in the plugin
      *
      * @param array &$processorParameters configuration array
-     * @param TcaSelectItems $parentObject parent object
      * @return void
      */
-    public function addQuerySettings(array &$processorParameters, TcaSelectItems $parentObject)
+    public function addQuerySettings(array &$processorParameters)
     {
         if (!empty($processorParameters['flexParentDatabaseRow']['pid'])) {
             $row = $processorParameters['flexParentDatabaseRow'];
@@ -80,14 +78,14 @@ class ItemsProcFunc
             // Add tsconfig values
         if (is_numeric($row['pid'])) {
             $pagesTsConfig = \TYPO3\CMS\Backend\Utility\BackendUtility::getPagesTSconfig($row['pid']);
-            if (isset($pagesTsConfig['tx_solrfluidresult.']['querySettings.']) && is_array($pagesTsConfig['tx_solrfluidresult.']['querySettings.'])) {
+            if (isset($pagesTsConfig['tx_solrfluidresult.']['querySettings.']) && \is_array($pagesTsConfig['tx_solrfluidresult.']['querySettings.'])) {
                     // Add every item
                 foreach ($pagesTsConfig['tx_solrfluidresult.']['querySettings.'] as $key => $label) {
                     $additionalLayout = [
                         $GLOBALS['LANG']->sL($label, true),
                         $key
                     ];
-                    array_push($processorParameters['items'], $additionalLayout);
+                    $processorParameters['items'][] = $additionalLayout;
                 }
             }
         }
