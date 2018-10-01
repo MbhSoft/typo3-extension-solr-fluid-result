@@ -3,6 +3,9 @@
 	<file source-language="en" datatype="plaintext" original="messages" date="2011-10-17T20:22:32Z" product-name="solr_fluid_result">
 		<header/>
 		<body>
+			<trans-unit id="search_title" xml:space="preserve">
+				<source>Search Results</source>
+			</trans-unit>
 			<trans-unit id="flexforms_tab.settings" xml:space="preserve">
 				<source>Settings</source>
 			</trans-unit>
@@ -11,6 +14,12 @@
 			</trans-unit>
 			<trans-unit id="flexforms_general.templateLayout" xml:space="preserve">
 				<source>templateLayout</source>
+			</trans-unit>
+			<trans-unit id="flexforms_general.maximumResults" xml:space="preserve">
+				<source>Maximum results</source>
+			</trans-unit>
+			<trans-unit id="flexforms_general.categoryFilterItem" xml:space="preserve">
+				<source>Category filter item</source>
 			</trans-unit>
 		</body>
 	</file>

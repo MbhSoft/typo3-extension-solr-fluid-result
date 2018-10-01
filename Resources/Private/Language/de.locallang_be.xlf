@@ -3,6 +3,9 @@
 	<file source-language="en" target-language="de_DE" datatype="plaintext" original="messages" date="2011-10-17T20:22:32Z" product-name="solr_fluid_result">
 		<header/>
 		<body>
+			<trans-unit id="search_title" xml:space="preserve">
+				<target state="translated">Suchergebnisse</target>
+			</trans-unit>
 			<trans-unit id="flexforms_tab.settings" xml:space="preserve">
 				<target state="translated">Einstellungen</target>
 			</trans-unit>
@@ -11,6 +14,12 @@
 			</trans-unit>
 			<trans-unit id="flexforms_general.templateLayout" xml:space="preserve">
 				<target state="translated">Ausgabe</target>
+			</trans-unit>
+			<trans-unit id="flexforms_general.maximumResults" xml:space="preserve">
+				<target state="translated">Maximale Anzahl anzuzeigender Ergebnisse</target>
+			</trans-unit>
+			<trans-unit id="flexforms_general.categoryFilterItem" xml:space="preserve">
+				<target state="translated">Kategorie Filter</target>
 			</trans-unit>
 		</body>
 	</file>
