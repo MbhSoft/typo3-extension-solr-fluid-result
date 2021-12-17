@@ -10,36 +10,34 @@
  * writing. "version" and "dependencies" must not be touched!
  ***************************************************************/
 
-$EM_CONF[$_EXTKEY] = array(
-	'title' => 'Additional result renderer for ext:solr',
-	'description' => '',
-	'category' => '',
-	'author' => 'Marc Bastian Heinrichs',
-	'author_email' => 'mbh@mbh-software.de',
-	'shy' => '',
-	'dependencies' => '',
-	'conflicts' => '',
-	'priority' => 'bottom',
-	'module' => '',
-	'state' => 'alpha',
-	'internal' => '',
-	'uploadfolder' => 0,
-	'createDirs' => '',
-	'modify_tables' => '',
-	'clearCacheOnLoad' => 0,
-	'lockType' => '',
-	'author_company' => '',
-	'version' => '1.0.0-dev',
-	'constraints' => array(
-		'depends' => array(
-			'solr' => '3.0.0'
-		),
-		'conflicts' => array(
-		),
-		'suggests' => array(
-		),
-	),
-	'_md5_values_when_last_written' => '',
-);
-
-?>
+$EM_CONF[$_EXTKEY] = [
+    'title' => 'Additional result renderer for ext:solr',
+    'description' => '',
+    'category' => '',
+    'author' => 'Marc Bastian Heinrichs',
+    'author_email' => 'mbh@mbh-software.de',
+    'shy' => '',
+    'dependencies' => '',
+    'conflicts' => '',
+    'priority' => 'bottom',
+    'module' => '',
+    'state' => 'alpha',
+    'internal' => '',
+    'uploadfolder' => 0,
+    'createDirs' => '',
+    'modify_tables' => '',
+    'clearCacheOnLoad' => 0,
+    'lockType' => '',
+    'author_company' => '',
+    'version' => '1.0.0-dev',
+    'constraints' => [
+        'depends' => [
+            'solr' => ''
+        ],
+        'conflicts' => [
+        ],
+        'suggests' => [
+        ],
+    ],
+    '_md5_values_when_last_written' => '',
+];
