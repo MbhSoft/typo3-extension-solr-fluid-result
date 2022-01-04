@@ -1,6 +1,12 @@
 <?php
 namespace MbhSoftware\SolrFluidResult\Service;
 
+use ApacheSolrForTypo3\Solr\Domain\Search\Query\Query;
+use ApacheSolrForTypo3\Solr\Domain\Search\Query\ParameterBuilder\Sortings;
+use TYPO3\CMS\Core\SingletonInterface;
+use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
+use TYPO3\CMS\Core\Context\Context;
+use ApacheSolrForTypo3\Solr\System\Solr\Document\Document;
 /***************************************************************
  *  Copyright notice
  *
@@ -36,18 +42,18 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 /**
  * Class SearchService
  */
-class SearchService implements \TYPO3\CMS\Core\SingletonInterface
+class SearchService implements SingletonInterface
 {
 
     /**
      * an instance of \ApacheSolrForTypo3\Solr\Search
      *
-     * @var \ApacheSolrForTypo3\Solr\Search
+     * @var Search
      */
     protected $search;
 
     /**
-     * @var \ApacheSolrForTypo3\Solr\Domain\Search\Query\Query
+     * @var Query
      */
     protected $query;
 
@@ -59,7 +65,7 @@ class SearchService implements \TYPO3\CMS\Core\SingletonInterface
     protected $solrAvailable;
 
     /**
-     * @var \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface
+     * @var ConfigurationManagerInterface
      */
     protected $configurationManager;
 
@@ -69,10 +75,10 @@ class SearchService implements \TYPO3\CMS\Core\SingletonInterface
     protected $searchResultBuilder;
 
     /**
-     * @param \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface $configurationManager
+     * @param ConfigurationManagerInterface $configurationManager
      * @return void
      */
-    public function injectConfigurationManager(\TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface $configurationManager)
+    public function injectConfigurationManager(ConfigurationManagerInterface $configurationManager)
     {
         $this->configurationManager = $configurationManager;
     }
@@ -98,7 +104,7 @@ class SearchService implements \TYPO3\CMS\Core\SingletonInterface
      * @param string $queryFields
      * @param string $sorting
      * @throws \Exception
-     * @return boolean
+     * @return SearchService
      */
     public function buildQuery($keywords, array $filters = [], $queryFields = '', $sorting = '', $resultsPerPage = 10, $allowedSites = '')
     {
@@ -119,20 +125,23 @@ class SearchService implements \TYPO3\CMS\Core\SingletonInterface
         $queryBuilder = GeneralUtility::makeInstance(QueryBuilder::class);
         $queryBuilder->newSearchQuery('')
             ->useQueryString($keywords)
-            ->useRawQueryString()
+            ->useQueryType('standard')
             ->useSiteHashFromAllowedSites($allowedSites)
-            ->useUserAccessGroups(explode(',', $GLOBALS['TSFE']->gr_list));
+            ->useUserAccessGroups(explode(',', implode(',', GeneralUtility::makeInstance(Context::class)->getPropertyFromAspect('frontend.user', 'groupIds'))));
 
         if ($queryFields) {
             $queryBuilder->useQueryFields(QueryFields::fromString($queryFields));
         }
 
         if ($sorting && preg_match('/^([a-z0-9_]+ (asc|desc)[, ]*)*([a-z0-9_]+ (asc|desc))+$/i', $sorting)) {
-            $queryBuilder->useSorting($sorting);
+            $sortings = Sortings::fromString($sorting);
+            $queryBuilder->useSortings($sortings);
         }
 
         $queryBuilder->useFilterArray($filters);
-        $queryBuilder->useResultsPerPage($resultsPerPage);
+        if (is_int($resultsPerPage)) {
+            $queryBuilder->useResultsPerPage($resultsPerPage);
+        }
 
         $this->query = $queryBuilder->getQuery();
 
@@ -140,7 +149,7 @@ class SearchService implements \TYPO3\CMS\Core\SingletonInterface
     }
 
     /**
-     * @return \ApacheSolrForTypo3\Solr\Domain\Search\Query\Query
+     * @return Query
      */
     public function getQuery()
     {
@@ -155,14 +164,13 @@ class SearchService implements \TYPO3\CMS\Core\SingletonInterface
     public function search()
     {
         try {
-            $this->search->search($this->query, 0, null);
+            $response = $this->search->search($this->query, 0, null);
 
             if ($this->isGroupQuery()) {
                 $groupField = $this->getGroupField();
-                $response = $this->search->getResponse();
                 $results = $response->grouped->$groupField->matches;
             } else {
-                $results = $this->search->getNumberOfResults();
+                $results = $response->response->numFound;
             }
         } catch (\Exception $e) {
             $results = null;
@@ -279,7 +287,7 @@ class SearchService implements \TYPO3\CMS\Core\SingletonInterface
     {
         $solrConnection = GeneralUtility::makeInstance(ConnectionManager::class)->getConnectionByPageId(
             $GLOBALS['TSFE']->id,
-            $GLOBALS['TSFE']->sys_language_uid
+            GeneralUtility::makeInstance(Context::class)->getPropertyFromAspect('language', 'id')
         );
 
         /** @var Search */
@@ -294,7 +302,7 @@ class SearchService implements \TYPO3\CMS\Core\SingletonInterface
         $parsedDocuments = [];
 
         foreach ($documents as $originalDocument) {
-            $document = new \Apache_Solr_Document();
+            $document = new Document();
             foreach ($originalDocument as $key => $value) {
                 //If a result is an array with only a single
                 //value then its nice to be able to access

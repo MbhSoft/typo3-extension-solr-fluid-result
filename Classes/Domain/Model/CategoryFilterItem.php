@@ -2,6 +2,7 @@
 
 namespace MbhSoftware\SolrFluidResult\Domain\Model;
 
+use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 use TYPO3\CMS\Extbase\Domain\Model\Category;
 
@@ -30,12 +31,12 @@ class CategoryFilterItem extends AbstractEntity
     protected $operator;
 
     /**
-     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\TYPO3\CMS\Extbase\Domain\Model\Category>
+     * @var ObjectStorage<Category>
      */
     protected $categories;
 
     /**
-     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\MbhSoftware\SolrFluidResult\Domain\Model\CategoryFilterItem>
+     * @var ObjectStorage<\MbhSoftware\SolrFluidResult\Domain\Model\CategoryFilterItem>
      */
     protected $items;
 
@@ -50,8 +51,8 @@ class CategoryFilterItem extends AbstractEntity
      */
     public function __construct()
     {
-        $this->categories = new \TYPO3\CMS\Extbase\Persistence\ObjectStorage();
-        $this->items = new \TYPO3\CMS\Extbase\Persistence\ObjectStorage();
+        $this->categories = new ObjectStorage();
+        $this->items = new ObjectStorage();
     }
 
     /**
@@ -105,7 +106,7 @@ class CategoryFilterItem extends AbstractEntity
     /**
      * Get categories
      *
-     * @return \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\TYPO3\CMS\Extbase\Domain\Model\Category>
+     * @return ObjectStorage<Category>
      */
     public function getCategories()
     {
@@ -115,7 +116,7 @@ class CategoryFilterItem extends AbstractEntity
     /**
      * Set categories
      *
-     * @param  \TYPO3\CMS\Extbase\Persistence\ObjectStorage $categories
+     * @param ObjectStorage $categories
      */
     public function setCategories($categories)
     {
@@ -133,7 +134,7 @@ class CategoryFilterItem extends AbstractEntity
     }
 
     /**
-     * @return \TYPO3\CMS\Extbase\Persistence\ObjectStorage
+     * @return ObjectStorage
      */
     public function getItems()
     {
@@ -141,9 +142,9 @@ class CategoryFilterItem extends AbstractEntity
     }
 
     /**
-     * @param \TYPO3\CMS\Extbase\Persistence\ObjectStorage $items
+     * @param ObjectStorage $items
      */
-    public function setItems(\TYPO3\CMS\Extbase\Persistence\ObjectStorage $items)
+    public function setItems(ObjectStorage $items)
     {
         $this->items = $items;
     }

@@ -5,7 +5,7 @@ if (!defined('TYPO3_MODE')) {
 
 call_user_func(function () {
     \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerPlugin(
-        'MbhSoftware.SolrFluidResult',
+        'SolrFluidResult',
         'Search',
         'LLL:EXT:solr_fluid_result/Resources/Private/Language/locallang_be.xlf:search_title'
     );
