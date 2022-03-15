@@ -33,3 +33,4 @@ ExtensionBuilder.json
 # ignore other not versioned folders
 #
 .sass-cache
+vendor/

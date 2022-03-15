@@ -1,0 +1,81 @@
+stages:
+  - check
+  - test
+
+check:php:lint:
+  stage: check
+  before_script:
+    - rm composer.json && rm -f composer.lock
+    - /opt/plesk/php/7.0/bin/php /usr/lib64/plesk-9.0/composer.phar init --no-interaction
+    - /opt/plesk/php/7.0/bin/php /usr/lib64/plesk-9.0/composer.phar require --no-ansi --no-interaction --ignore-platform-reqs jakub-onderka/php-parallel-lint
+  script:
+    - vendor/bin/parallel-lint -p /opt/plesk/php/7.0/bin/php --exclude vendor .
+  except:
+    - master
+    - tags
+  tags:
+    - check
+    - php
+    - phplint
+
+check:php:codestyle:
+  stage: check
+  before_script:
+    - rm composer.json && rm -f composer.lock
+    - /opt/plesk/php/7.0/bin/php /usr/lib64/plesk-9.0/composer.phar init --no-interaction
+    - /opt/plesk/php/7.0/bin/php /usr/lib64/plesk-9.0/composer.phar require --no-ansi --no-interaction --ignore-platform-reqs squizlabs/php_codesniffer
+  script:
+    - /opt/plesk/php/7.0/bin/php vendor/bin/phpcs -psn --colors --extensions=php --encoding=utf-8 --ignore=vendor --standard=PSR2 .
+  except:
+    - master
+    - tags
+  tags:
+    - check
+    - php
+    - codestyle
+
+check:typoscript:codestyle:
+  stage: check
+  before_script:
+    - rm composer.json && rm -f composer.lock
+    - /opt/plesk/php/7.0/bin/php /usr/lib64/plesk-9.0/composer.phar init --no-interaction
+    - /opt/plesk/php/7.0/bin/php /usr/lib64/plesk-9.0/composer.phar require --no-ansi --no-interaction symfony/console symfony/process
+  script:
+    - /opt/plesk/php/7.0/bin/php ./Build/Scripts/find-typoscript-files-with-tabs.php --no-ansi -v
+  except:
+    - master
+    - tags
+  tags:
+    - check
+    - php
+    - codestyle
+
+check:xlf:lint:
+  stage: check
+  before_script:
+      - rm composer.json && rm -f composer.lock
+      - /opt/plesk/php/7.0/bin/php /usr/lib64/plesk-9.0/composer.phar init --no-interaction
+      - /opt/plesk/php/7.0/bin/php /usr/lib64/plesk-9.0/composer.phar require --no-ansi --no-interaction sclable/xml-lint
+  script:
+    - /opt/plesk/php/7.0/bin/php vendor/bin/xmllint -p \*.xlf -- .
+  except:
+    - master
+    - tags
+  tags:
+    - check
+    - xmllint
+
+test:phpunit:
+  image: mbhsoft/typo3-testing-docker-containers-php70
+  stage: test
+  before_script:
+    - rm composer.json && rm -f composer.lock   && cp Build/Tests/Unit/composer.json .
+    - composer install --no-ansi --no-interaction
+    - composer install --no-ansi --no-interaction
+  script:
+    - ./bin/phpunit --colors -c vendor/typo3/testing-framework/Resources/Core/Build/UnitTests.xml Tests/Unit
+  except:
+    - master
+    - tags
+  tags:
+    - phpunit

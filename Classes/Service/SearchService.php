@@ -81,8 +81,9 @@ class SearchService implements \TYPO3\CMS\Core\SingletonInterface
      * AbstractResultParser constructor.
      * @param SearchResultBuilder|null $resultBuilder
      */
-    public function __construct(SearchResultBuilder $resultBuilder = null) {
-        $this->searchResultBuilder = is_null($resultBuilder) ? GeneralUtility::makeInstance(SearchResultBuilder::class) : $resultBuilder;
+    public function __construct(SearchResultBuilder $resultBuilder = null)
+    {
+        $this->searchResultBuilder = $resultBuilder === null ? GeneralUtility::makeInstance(SearchResultBuilder::class) : $resultBuilder;
     }
 
 
@@ -96,6 +97,7 @@ class SearchService implements \TYPO3\CMS\Core\SingletonInterface
      * @param array $filters
      * @param string $queryFields
      * @param string $sorting
+     * @throws \Exception
      * @return boolean
      */
     public function buildQuery($keywords, array $filters = [], $queryFields = '', $sorting = '', $resultsPerPage = 10, $allowedSites = '')
@@ -162,7 +164,7 @@ class SearchService implements \TYPO3\CMS\Core\SingletonInterface
             } else {
                 $results = $this->search->getNumberOfResults();
             }
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $results = null;
         }
         return $results;
@@ -218,10 +220,7 @@ class SearchService implements \TYPO3\CMS\Core\SingletonInterface
         $response = $this->search->getResponse();
         $parsedData = $response->getParsedData();
         $documents = $parsedData->response->docs;
-
-        $searchResults = $this->getSearchResultCollection($documents);
-
-        return $searchResults;
+        return $this->getSearchResultCollection($documents);
     }
 
 
@@ -247,8 +246,8 @@ class SearchService implements \TYPO3\CMS\Core\SingletonInterface
                 if (!is_array($filters['remove.'][$filterKey])) {
                     if (is_array($filters['remove.'][$filterKey . '.'])) {
                         $filter = $this->configurationManager->getContentObject()->stdWrap(
-                                $filters['remove.'][$filterKey],
-                                $filters['remove.'][$filterKey . '.']
+                            $filters['remove.'][$filterKey],
+                            $filters['remove.'][$filterKey . '.']
                         );
                     }
 
@@ -297,7 +296,6 @@ class SearchService implements \TYPO3\CMS\Core\SingletonInterface
         foreach ($documents as $originalDocument) {
             $document = new \Apache_Solr_Document();
             foreach ($originalDocument as $key => $value) {
-
                 //If a result is an array with only a single
                 //value then its nice to be able to access
                 //it as if it were always a single value

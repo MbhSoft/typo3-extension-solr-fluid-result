@@ -3,9 +3,35 @@
 	<file source-language="en" target-language="de_DE" datatype="plaintext" original="messages" date="2011-10-17T20:22:32Z" product-name="solr_fluid_result">
 		<header/>
 		<body>
-			<trans-unit id="" xml:space="preserve">
-				<source></source>
-				<target state="translated"></target>
+			<trans-unit id="tx_solrfluidresult_domain_model_categoryfilteritem" xml:space="preserve">
+				<target state="translated">Kategorie Filter</target>
+			</trans-unit>
+			<trans-unit id="tx_solrfluidresult_domain_model_categoryfilteritem.title" xml:space="preserve">
+				<target state="translated">Titel</target>
+			</trans-unit>
+			<trans-unit id="tx_solrfluidresult_domain_model_categoryfilteritem.type" xml:space="preserve">
+				<target state="translated">Typ</target>
+			</trans-unit>
+			<trans-unit id="tx_solrfluidresult_domain_model_categoryfilteritem.type.I.0" xml:space="preserve">
+				<target state="translated">Operator</target>
+			</trans-unit>
+			<trans-unit id="tx_solrfluidresult_domain_model_categoryfilteritem.type.I.1" xml:space="preserve">
+				<target state="translated">Kategorie</target>
+			</trans-unit>
+			<trans-unit id="tx_solrfluidresult_domain_model_categoryfilteritem.operator" xml:space="preserve">
+				<target state="translated">Operator</target>
+			</trans-unit>
+			<trans-unit id="tx_solrfluidresult_domain_model_categoryfilteritem.operator.I.0" xml:space="preserve">
+				<target state="translated">und</target>
+			</trans-unit>
+			<trans-unit id="tx_solrfluidresult_domain_model_categoryfilteritem.operator.I.1" xml:space="preserve">
+				<target state="translated">oder</target>
+			</trans-unit>
+			<trans-unit id="tx_solrfluidresult_domain_model_categoryfilteritem.items" xml:space="preserve">
+				<target state="translated">Unterelemente</target>
+			</trans-unit>
+			<trans-unit id="tx_solrfluidresult_domain_model_categoryfilteritem.categories" xml:space="preserve">
+				<target state="translated">Kategorien</target>
 			</trans-unit>
 		</body>
 	</file>
