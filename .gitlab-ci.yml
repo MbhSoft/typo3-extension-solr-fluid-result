@@ -6,7 +6,7 @@ check:php:lint:
   stage: check
   before_script:
     - rm composer.json && rm -f composer.lock
-    - /opt/plesk/php/7.4/bin/php /usr/lib64/plesk-9.0/composer.phar init --no-interaction
+    - /opt/plesk/php/7.4/bin/php /usr/lib64/plesk-9.0/composer.phar init --no-interaction --name "mbhsoft/phplint"
     - /opt/plesk/php/7.4/bin/php /usr/lib64/plesk-9.0/composer.phar require --no-ansi --no-interaction --ignore-platform-reqs jakub-onderka/php-parallel-lint
   script:
     - vendor/bin/parallel-lint -p /opt/plesk/php/7.4/bin/php --exclude vendor .
@@ -22,7 +22,7 @@ check:php:codestyle:
   stage: check
   before_script:
     - rm composer.json && rm -f composer.lock
-    - /opt/plesk/php/7.4/bin/php /usr/lib64/plesk-9.0/composer.phar init --no-interaction
+    - /opt/plesk/php/7.4/bin/php /usr/lib64/plesk-9.0/composer.phar init --no-interaction --name "mbhsoft/phpcodestyle"
     - /opt/plesk/php/7.4/bin/php /usr/lib64/plesk-9.0/composer.phar require --no-ansi --no-interaction --ignore-platform-reqs squizlabs/php_codesniffer
   script:
     - /opt/plesk/php/7.4/bin/php vendor/bin/phpcs -psn --colors --extensions=php --encoding=utf-8 --ignore=vendor --standard=PSR2 .
@@ -38,7 +38,7 @@ check:typoscript:codestyle:
   stage: check
   before_script:
     - rm composer.json && rm -f composer.lock
-    - /opt/plesk/php/7.4/bin/php /usr/lib64/plesk-9.0/composer.phar init --no-interaction
+    - /opt/plesk/php/7.4/bin/php /usr/lib64/plesk-9.0/composer.phar init --no-interaction --name "mbhsoft/tscodestyle"
     - /opt/plesk/php/7.4/bin/php /usr/lib64/plesk-9.0/composer.phar require --no-ansi --no-interaction symfony/console symfony/process
   script:
     - /opt/plesk/php/7.4/bin/php ./Build/Scripts/find-typoscript-files-with-tabs.php --no-ansi -v
@@ -54,7 +54,7 @@ check:xlf:lint:
   stage: check
   before_script:
       - rm composer.json && rm -f composer.lock
-      - /opt/plesk/php/7.4/bin/php /usr/lib64/plesk-9.0/composer.phar init --no-interaction
+      - /opt/plesk/php/7.4/bin/php /usr/lib64/plesk-9.0/composer.phar init --no-interaction --name "mbhsoft/xlflint"
       - /opt/plesk/php/7.4/bin/php /usr/lib64/plesk-9.0/composer.phar require --no-ansi --no-interaction sclable/xml-lint
   script:
     - /opt/plesk/php/7.4/bin/php vendor/bin/xmllint -p \*.xlf -- .
