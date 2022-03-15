@@ -34,21 +34,21 @@ check:php:codestyle:
     - php
     - codestyle
 
-check:typoscript:codestyle:
-  stage: check
-  before_script:
-    - rm composer.json && rm -f composer.lock
-    - /opt/plesk/php/7.4/bin/php /usr/lib64/plesk-9.0/composer.phar init --no-interaction --name "mbhsoft/tscodestyle"
-    - /opt/plesk/php/7.4/bin/php /usr/lib64/plesk-9.0/composer.phar require --no-ansi --no-interaction symfony/console symfony/process
-  script:
-    - /opt/plesk/php/7.4/bin/php ./Build/Scripts/find-typoscript-files-with-tabs.php --no-ansi -v
-  except:
-    - master
-    - tags
-  tags:
-    - check
-    - php
-    - codestyle
+#check:typoscript:codestyle:
+#  stage: check
+#  before_script:
+#    - rm composer.json && rm -f composer.lock
+#    - /opt/plesk/php/7.4/bin/php /usr/lib64/plesk-9.0/composer.phar init --no-interaction --name "mbhsoft/tscodestyle"
+#    - /opt/plesk/php/7.4/bin/php /usr/lib64/plesk-9.0/composer.phar require --no-ansi --no-interaction symfony/console symfony/process
+#  script:
+#    - /opt/plesk/php/7.4/bin/php ./Build/Scripts/find-typoscript-files-with-tabs.php --no-ansi -v
+#  except:
+#    - master
+#    - tags
+#  tags:
+#    - check
+#    - php
+#    - codestyle
 
 check:xlf:lint:
   stage: check
