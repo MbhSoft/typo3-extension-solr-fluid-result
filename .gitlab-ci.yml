@@ -6,10 +6,10 @@ check:php:lint:
   stage: check
   before_script:
     - rm composer.json && rm -f composer.lock
-    - /opt/plesk/php/7.0/bin/php /usr/lib64/plesk-9.0/composer.phar init --no-interaction
-    - /opt/plesk/php/7.0/bin/php /usr/lib64/plesk-9.0/composer.phar require --no-ansi --no-interaction --ignore-platform-reqs jakub-onderka/php-parallel-lint
+    - /opt/plesk/php/7.4/bin/php /usr/lib64/plesk-9.0/composer.phar init --no-interaction
+    - /opt/plesk/php/7.4/bin/php /usr/lib64/plesk-9.0/composer.phar require --no-ansi --no-interaction --ignore-platform-reqs jakub-onderka/php-parallel-lint
   script:
-    - vendor/bin/parallel-lint -p /opt/plesk/php/7.0/bin/php --exclude vendor .
+    - vendor/bin/parallel-lint -p /opt/plesk/php/7.4/bin/php --exclude vendor .
   except:
     - master
     - tags
@@ -22,10 +22,10 @@ check:php:codestyle:
   stage: check
   before_script:
     - rm composer.json && rm -f composer.lock
-    - /opt/plesk/php/7.0/bin/php /usr/lib64/plesk-9.0/composer.phar init --no-interaction
-    - /opt/plesk/php/7.0/bin/php /usr/lib64/plesk-9.0/composer.phar require --no-ansi --no-interaction --ignore-platform-reqs squizlabs/php_codesniffer
+    - /opt/plesk/php/7.4/bin/php /usr/lib64/plesk-9.0/composer.phar init --no-interaction
+    - /opt/plesk/php/7.4/bin/php /usr/lib64/plesk-9.0/composer.phar require --no-ansi --no-interaction --ignore-platform-reqs squizlabs/php_codesniffer
   script:
-    - /opt/plesk/php/7.0/bin/php vendor/bin/phpcs -psn --colors --extensions=php --encoding=utf-8 --ignore=vendor --standard=PSR2 .
+    - /opt/plesk/php/7.4/bin/php vendor/bin/phpcs -psn --colors --extensions=php --encoding=utf-8 --ignore=vendor --standard=PSR2 .
   except:
     - master
     - tags
@@ -38,10 +38,10 @@ check:typoscript:codestyle:
   stage: check
   before_script:
     - rm composer.json && rm -f composer.lock
-    - /opt/plesk/php/7.0/bin/php /usr/lib64/plesk-9.0/composer.phar init --no-interaction
-    - /opt/plesk/php/7.0/bin/php /usr/lib64/plesk-9.0/composer.phar require --no-ansi --no-interaction symfony/console symfony/process
+    - /opt/plesk/php/7.4/bin/php /usr/lib64/plesk-9.0/composer.phar init --no-interaction
+    - /opt/plesk/php/7.4/bin/php /usr/lib64/plesk-9.0/composer.phar require --no-ansi --no-interaction symfony/console symfony/process
   script:
-    - /opt/plesk/php/7.0/bin/php ./Build/Scripts/find-typoscript-files-with-tabs.php --no-ansi -v
+    - /opt/plesk/php/7.4/bin/php ./Build/Scripts/find-typoscript-files-with-tabs.php --no-ansi -v
   except:
     - master
     - tags
@@ -54,10 +54,10 @@ check:xlf:lint:
   stage: check
   before_script:
       - rm composer.json && rm -f composer.lock
-      - /opt/plesk/php/7.0/bin/php /usr/lib64/plesk-9.0/composer.phar init --no-interaction
-      - /opt/plesk/php/7.0/bin/php /usr/lib64/plesk-9.0/composer.phar require --no-ansi --no-interaction sclable/xml-lint
+      - /opt/plesk/php/7.4/bin/php /usr/lib64/plesk-9.0/composer.phar init --no-interaction
+      - /opt/plesk/php/7.4/bin/php /usr/lib64/plesk-9.0/composer.phar require --no-ansi --no-interaction sclable/xml-lint
   script:
-    - /opt/plesk/php/7.0/bin/php vendor/bin/xmllint -p \*.xlf -- .
+    - /opt/plesk/php/7.4/bin/php vendor/bin/xmllint -p \*.xlf -- .
   except:
     - master
     - tags
@@ -66,7 +66,7 @@ check:xlf:lint:
     - xmllint
 
 test:phpunit:
-  image: mbhsoft/typo3-testing-docker-containers-php70
+  image: mbhsoft/typo3-testing-docker-containers-php74
   stage: test
   before_script:
     - rm composer.json && rm -f composer.lock   && cp Build/Tests/Unit/composer.json .
