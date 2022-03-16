@@ -1,17 +1,21 @@
 {
-  "name": "mbhsoft/solr-fluid-result",
-  "type": "typo3-cms-extension",
-  "description": "",
-  "homepage": "http://www.mbh-software.de",
-  "license": "proprietary",
-  "require": {
-    "typo3/cms-core": "^8.7.0",
-    "apache-solr-for-typo3/solr": "^8.0"
-  },
-  "autoload": {
-    "psr-4": {
-      "MbhSoftware\\SolrFluidResult\\": "Classes"
+    "name": "mbhsoft/solr-fluid-result",
+    "type": "typo3-cms-extension",
+    "description": "",
+    "homepage": "http://www.mbh-software.de",
+    "license": "proprietary",
+    "require": {
+        "typo3/cms-core": "^10.4.0",
+        "apache-solr-for-typo3/solr": "^11.1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "MbhSoftware\\SolrFluidResult\\": "Classes"
+        }
+    },
+    "extra": {
+        "typo3/cms": {
+            "extension-key": "solr_fluid_result"
+        }
     }
-  }
 }
-

@@ -4,10 +4,10 @@ if (!defined('TYPO3_MODE')) {
 }
 
 \TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
-    'MbhSoftware.SolrFluidResult',
+    'SolrFluidResult',
     'Search',
     [
-        'Search' => 'index',
+        \MbhSoftware\SolrFluidResult\Controller\SearchController::class => 'index',
     ]
 );
 
