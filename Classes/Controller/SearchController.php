@@ -1,6 +1,11 @@
 <?php
 namespace MbhSoftware\SolrFluidResult\Controller;
 
+use MbhSoftware\SolrFluidResult\Domain\Repository\CategoryFilterItemRepository;
+use ApacheSolrForTypo3\Solr\Domain\Search\Query\Query;
+use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
+use TYPO3\CMS\Core\TypoScript\TypoScriptService;
+use MbhSoftware\SolrFluidResult\Service\SearchService;
 /***************************************************************
  *  Copyright notice
  *
@@ -34,50 +39,50 @@ use TYPO3\CMS\Core\Utility\ArrayUtility;
 /**
  * Class SearchController
  */
-class SearchController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
+class SearchController extends ActionController
 {
 
 
     /**
-     * @var \TYPO3\CMS\Extbase\Service\TypoScriptService
+     * @var TypoScriptService
      */
     protected $typoScriptService;
 
     /**
-     * @var \MbhSoftware\SolrFluidResult\Service\SearchService
+     * @var SearchService
      */
     protected $searchService;
 
     /**
-     * @var \MbhSoftware\SolrFluidResult\Domain\Repository\CategoryFilterItemRepository
+     * @var CategoryFilterItemRepository
      */
     protected $categoryFilterItemRepository;
 
     /**
      * inject the categoryFilterItemRepository
      *
-     * @param \MbhSoftware\SolrFluidResult\Domain\Repository\CategoryFilterItemRepository $categoryFilterItemRepository
+     * @param CategoryFilterItemRepository $categoryFilterItemRepository
      * @return void
      */
-    public function injectCategoryFilterItemRepository(\MbhSoftware\SolrFluidResult\Domain\Repository\CategoryFilterItemRepository $categoryFilterItemRepository)
+    public function injectCategoryFilterItemRepository(CategoryFilterItemRepository $categoryFilterItemRepository)
     {
         $this->categoryFilterItemRepository = $categoryFilterItemRepository;
     }
 
     /**
-     * @param \TYPO3\CMS\Extbase\Service\TypoScriptService $typoScriptService
+     * @param TypoScriptService $typoScriptService
      * @return void
      */
-    public function injectTypoScriptService(\TYPO3\CMS\Extbase\Service\TypoScriptService $typoScriptService)
+    public function injectTypoScriptService(TypoScriptService $typoScriptService)
     {
         $this->typoScriptService = $typoScriptService;
     }
 
     /**
-     * @param \MbhSoftware\SolrFluidResult\Service\SearchService $searchService
+     * @param SearchService $searchService
      * @return void
      */
-    public function injectSearchService(\MbhSoftware\SolrFluidResult\Service\SearchService $searchService)
+    public function injectSearchService(SearchService $searchService)
     {
         $this->searchService = $searchService;
     }
@@ -101,7 +106,7 @@ class SearchController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
             ArrayUtility::mergeRecursiveWithOverrule($this->settings, $this->settings[$selectedQuerySetting]);
         }
 
-        $templatePath = \TYPO3\CMS\Core\Utility\GeneralUtility::getFileAbsFileName($this->settings['templateLayouts'][$selectedTemplateLayout]);
+        $templatePath = GeneralUtility::getFileAbsFileName($this->settings['templateLayouts'][$selectedTemplateLayout]);
 
         if ($templatePath && !empty($this->settings['querySettings'][$selectedQuerySetting])) {
             $selectedQuerySettings = $this->settings['querySettings'][$selectedQuerySetting];
@@ -154,7 +159,7 @@ class SearchController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
             $this->searchService->buildQuery($queryString, $filters, $queryFields, $sorting, $maxResults, $allowedSites);
 
             $facetFields = [];
-            /** @var \ApacheSolrForTypo3\Solr\Domain\Search\Query\Query $query */
+            /** @var Query $query */
             $query = $this->searchService->getQuery();
 
             if (!empty($selectedQuerySettings['returnFields']) && $selectedQuerySettings['returnFields']) {

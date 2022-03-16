@@ -18,16 +18,13 @@ return [
         'enablecolumns' => [
             'disabled' => 'hidden',
         ],
-        'iconfile' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::siteRelPath('solr_fluid_result') . 'Resources/Public/Icons/tx_solrfluidresult_domain_model_categoryfilteritem.png',
+        'iconfile' => \TYPO3\CMS\Core\Utility\PathUtility::stripPathSitePrefix(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('solr_fluid_result')) . 'Resources/Public/Icons/tx_solrfluidresult_domain_model_categoryfilteritem.png',
         'searchFields' => 'uid,title',
-    ],
-    'interface' => [
-        'showRecordFieldList' => ''
     ],
     'columns' => [
         'hidden' => [
             'exclude' => 1,
-            'label' => 'LLL:EXT:lang/Resources/Private/Language/locallang_general.xlf:LGL.hidden',
+            'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.hidden',
             'config' => [
                 'type' => 'check',
                 'default' => 0
@@ -114,7 +111,6 @@ return [
         'categories' => [
             'exclude' => true,
             'label' => 'LLL:EXT:solr_fluid_result/Resources/Private/Language/locallang_db.xlf:tx_solrfluidresult_domain_model_categoryfilteritem.categories',
-            'l10n_mode' => 'mergeIfNotBlank',
             'config' => [
                 'type' => 'select',
                 'renderType' => 'selectTree',
@@ -137,6 +133,7 @@ return [
                 'size' => 10,
                 'minitems' => 0,
                 'maxitems' => 99,
+                ['behaviour' => ['allowLanguageSynchronization' => true]],
             ]
         ],
         'items' => [
@@ -155,14 +152,10 @@ return [
     ],
     'types' => [
         '0' => [
-            'showitem' => 'l10n_parent, l10n_diffsource,
-                --palette--;Default;default, title, operator, items,
-                --div--;LLL:EXT:cms/locallang_tca.xml:pages.tabs.extended,'
+            'showitem' => 'l10n_parent,l10n_diffsource,--palette--;Default;default,title,operator,items,--div--;LLL:EXT:cms/locallang_tca.xml:pages.tabs.extended'
         ],
         '1' => [
-            'showitem' => 'l10n_parent, l10n_diffsource,
-                --palette--;Default;default, title, operator, categories,
-                --div--;LLL:EXT:cms/locallang_tca.xml:pages.tabs.extended,'
+            'showitem' => 'l10n_parent,l10n_diffsource,--palette--;Default;default,title,operator,categories,--div--;LLL:EXT:cms/locallang_tca.xml:pages.tabs.extended'
         ],
     ],
     'palettes' => [

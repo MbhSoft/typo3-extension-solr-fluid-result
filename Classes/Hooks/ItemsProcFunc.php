@@ -1,6 +1,7 @@
 <?php
 namespace MbhSoftware\SolrFluidResult\Hooks;
 
+use TYPO3\CMS\Backend\Utility\BackendUtility;
 /***************************************************************
 *  Copyright notice
 *
@@ -48,12 +49,12 @@ class ItemsProcFunc
 
             // Add tsconfig values
         if (is_numeric($row['pid'])) {
-            $pagesTsConfig = \TYPO3\CMS\Backend\Utility\BackendUtility::getPagesTSconfig($row['pid']);
+            $pagesTsConfig = BackendUtility::getPagesTSconfig($row['pid']);
             if (isset($pagesTsConfig['tx_solrfluidresult.']['templateLayouts.']) && \is_array($pagesTsConfig['tx_solrfluidresult.']['templateLayouts.'])) {
-                    // Add every item
+                // Add every item
                 foreach ($pagesTsConfig['tx_solrfluidresult.']['templateLayouts.'] as $key => $label) {
                     $additionalLayout = [
-                        $GLOBALS['LANG']->sL($label, true),
+                        htmlspecialchars($GLOBALS['LANG']->sL($label)),
                         $key
                     ];
                     $processorParameters['items'][] = $additionalLayout;
@@ -77,12 +78,12 @@ class ItemsProcFunc
         }
             // Add tsconfig values
         if (is_numeric($row['pid'])) {
-            $pagesTsConfig = \TYPO3\CMS\Backend\Utility\BackendUtility::getPagesTSconfig($row['pid']);
+            $pagesTsConfig = BackendUtility::getPagesTSconfig($row['pid']);
             if (isset($pagesTsConfig['tx_solrfluidresult.']['querySettings.']) && \is_array($pagesTsConfig['tx_solrfluidresult.']['querySettings.'])) {
-                    // Add every item
+                // Add every item
                 foreach ($pagesTsConfig['tx_solrfluidresult.']['querySettings.'] as $key => $label) {
                     $additionalLayout = [
-                        $GLOBALS['LANG']->sL($label, true),
+                        htmlspecialchars($GLOBALS['LANG']->sL($label)),
                         $key
                     ];
                     $processorParameters['items'][] = $additionalLayout;
