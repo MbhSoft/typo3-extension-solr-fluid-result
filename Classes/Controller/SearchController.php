@@ -150,9 +150,9 @@ class SearchController extends ActionController
             $maxResults = 100;
 
             if (!empty($this->settings['maximumResults'])) {
-                $maxResults = $this->settings['maximumResults'];
+                $maxResults = (int)$this->settings['maximumResults'];
             } elseif (!empty($selectedQuerySettings['maxResults'])) {
-                $maxResults = $selectedQuerySettings['maxResults'];
+                $maxResults = (int)$selectedQuerySettings['maxResults'];
             }
 
             $this->searchService->reset();
