@@ -11,4 +11,4 @@ if (!defined('TYPO3_MODE')) {
     ]
 );
 
-\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPageTSConfig('<INCLUDE_TYPOSCRIPT: source="FILE:EXT:solr_fluid_result/Configuration/TsConfig/page.ts">');
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPageTSConfig('<INCLUDE_TYPOSCRIPT: source="FILE:EXT:solr_fluid_result/Configuration/TsConfig/page.tsconfig">');
