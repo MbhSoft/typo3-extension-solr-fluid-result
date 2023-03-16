@@ -259,6 +259,7 @@ class SearchController extends ActionController
             0 => ' AND ',
             1 => ' OR '
         ];
+        $sub = [];
         switch ($filterItem['type']) {
             case CategoryFilterItem::TYPE_OPERATOR:
                 if (!is_array($filterItem['items'])) {
@@ -272,9 +273,14 @@ class SearchController extends ActionController
                 if (!is_array($filterItem['categories'])) {
                     throw new \RuntimeException('Catgories missing', 1538040805);
                 }
-                foreach ($filterItem['categories'] as $category) {
-                    $sub[] = $categoryFilterFieldName . ':' . str_replace(' ', '\ ', $category);
+                if (!empty($categoryFilterFieldName)) {
+                    foreach ($filterItem['categories'] as $category) {
+                        $sub[] = $categoryFilterFieldName . ':' . str_replace(' ', '\ ', $category);
+                    }
                 }
+                break;
+            case CategoryFilterItem::TYPE_QUERY:
+                $sub[] = $filterItem['query'];
                 break;
         }
         if (count($sub) > 1) {
