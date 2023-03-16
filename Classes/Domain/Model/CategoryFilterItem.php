@@ -9,11 +9,12 @@ use TYPO3\CMS\Extbase\Domain\Model\Category;
 class CategoryFilterItem extends AbstractEntity
 {
 
-    const TYPE_OPERATOR = 0;
-    const TYPE_CATEGORY = 1;
+    public const TYPE_OPERATOR = 0;
+    public const TYPE_CATEGORY = 1;
+    public const TYPE_QUERY = 2;
 
-    const OPERATOR_AND = 0;
-    const OPERATOR_OR = 1;
+    public const OPERATOR_AND = 0;
+    public const OPERATOR_OR = 1;
 
     /**
      * @var string
@@ -29,6 +30,12 @@ class CategoryFilterItem extends AbstractEntity
      * @var int
      */
     protected $operator;
+
+
+    /**
+     * @var string
+     */
+    protected $query;
 
     /**
      * @var ObjectStorage<Category>
@@ -104,6 +111,22 @@ class CategoryFilterItem extends AbstractEntity
     }
 
     /**
+     * @return string
+     */
+    public function getQuery(): string
+    {
+        return $this->query;
+    }
+
+    /**
+     * @param string $query
+     */
+    public function setQuery(string $query): void
+    {
+        $this->query = $query;
+    }
+
+    /**
      * Get categories
      *
      * @return ObjectStorage<Category>
@@ -169,7 +192,7 @@ class CategoryFilterItem extends AbstractEntity
     {
         $flat = [
             'type' => $this->type,
-            'operator' => $this->operator
+            'operator' => $this->operator,
         ];
         if ($this->type == self::TYPE_OPERATOR) {
             foreach ($this->items as $item) {
@@ -179,6 +202,8 @@ class CategoryFilterItem extends AbstractEntity
             foreach ($this->categories as $category) {
                 $flat['categories'][] = $category->getTitle();
             }
+        } elseif ($this->type == self::TYPE_QUERY) {
+            $flat['query'] = $this->query;
         }
         return $flat;
     }

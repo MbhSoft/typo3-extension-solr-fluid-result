@@ -80,6 +80,10 @@ return [
                         'LLL:EXT:solr_fluid_result/Resources/Private/Language/locallang_db.xlf:tx_solrfluidresult_domain_model_categoryfilteritem.type.I.1',
                         1
                     ],
+                    [
+                        'LLL:EXT:solr_fluid_result/Resources/Private/Language/locallang_db.xlf:tx_solrfluidresult_domain_model_categoryfilteritem.type.I.2',
+                        2
+                    ],
                 ],
                 'size' => 1,
                 'maxitems' => 1,
@@ -106,6 +110,16 @@ return [
                 ],
                 'size' => 1,
                 'maxitems' => 1,
+            ]
+        ],
+        'query' => [
+            'exclude' => true,
+            'label' => 'LLL:EXT:solr_fluid_result/Resources/Private/Language/locallang_db.xlf:tx_solrfluidresult_domain_model_categoryfilteritem.query',
+            'config' => [
+                'behaviour' => [
+                    'allowLanguageSynchronization' => true
+                ],
+                'type' => 'input',
             ]
         ],
         'categories' => [
@@ -156,6 +170,9 @@ return [
         ],
         '1' => [
             'showitem' => 'l10n_parent,l10n_diffsource,--palette--;Default;default,title,operator,categories,--div--;LLL:EXT:cms/locallang_tca.xml:pages.tabs.extended'
+        ],
+        '2' => [
+            'showitem' => 'l10n_parent,l10n_diffsource,--palette--;Default;default,title,query,--div--;LLL:EXT:cms/locallang_tca.xml:pages.tabs.extended'
         ],
     ],
     'palettes' => [
