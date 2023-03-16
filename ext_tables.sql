@@ -14,6 +14,7 @@ CREATE TABLE tx_solrfluidresult_domain_model_categoryfilteritem (
 	categories int(11) DEFAULT '0' NOT NULL,
 	items int(11) DEFAULT '0' NOT NULL,
 	parent int(11) DEFAULT '0' NOT NULL,
+	query text,
 
 	PRIMARY KEY (uid),
 	KEY parent (pid)
