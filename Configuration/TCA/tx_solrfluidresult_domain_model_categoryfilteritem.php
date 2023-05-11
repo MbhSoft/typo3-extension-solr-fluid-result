@@ -11,6 +11,9 @@ return [
         'tstamp' => 'tstamp',
         'crdate' => 'crdate',
         'cruser_id' => 'cruser_id',
+        'languageField' => 'sys_language_uid',
+        'transOrigPointerField' => 'l10n_parent',
+        'transOrigDiffSourceField' => 'l10n_diffsource',
         'type' => 'type',
         'typeicon_column' => 'type',
         'useColumnsForDefaultValues' => 'type',
@@ -22,6 +25,46 @@ return [
         'searchFields' => 'uid,title',
     ],
     'columns' => [
+        'sys_language_uid' => [
+            'exclude' => true,
+            'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.language',
+            'config' => [
+                'type' => 'select',
+                'renderType' => 'selectSingle',
+                'special' => 'languages',
+                'items' => [
+                    [
+                        'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.allLanguages',
+                        -1,
+                        'flags-multiple',
+                    ],
+                ],
+                'default' => 0,
+            ],
+        ],
+        'l10n_parent' => [
+            'displayCond' => 'FIELD:sys_language_uid:>:0',
+            'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.l18n_parent',
+            'config' => [
+                'type' => 'select',
+                'renderType' => 'selectSingle',
+                'items' => [
+                    [
+                        '',
+                        0,
+                    ],
+                ],
+                'default' => 0,
+                'foreign_table' => 'tx_masterflexpim_domain_model_product',
+                'foreign_table_where' => 'AND tx_masterflexpim_domain_model_product.pid=###CURRENT_PID###'
+                    . ' AND tx_masterflexpim_domain_model_product.sys_language_uid IN (-1,0)',
+            ],
+        ],
+        'l10n_source' => [
+            'config' => [
+                'type' => 'passthrough',
+            ],
+        ],
         'hidden' => [
             'exclude' => 1,
             'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.hidden',
@@ -166,18 +209,18 @@ return [
     ],
     'types' => [
         '0' => [
-            'showitem' => 'l10n_parent,l10n_diffsource,--palette--;Default;default,title,operator,items,--div--;LLL:EXT:cms/locallang_tca.xml:pages.tabs.extended'
+            'showitem' => '--palette--;Default;default,title,operator,items,--div--;LLL:EXT:cms/locallang_tca.xml:pages.tabs.extended'
         ],
         '1' => [
-            'showitem' => 'l10n_parent,l10n_diffsource,--palette--;Default;default,title,operator,categories,--div--;LLL:EXT:cms/locallang_tca.xml:pages.tabs.extended'
+            'showitem' => '--palette--;Default;default,title,operator,categories,--div--;LLL:EXT:cms/locallang_tca.xml:pages.tabs.extended'
         ],
         '2' => [
-            'showitem' => 'l10n_parent,l10n_diffsource,--palette--;Default;default,title,query,--div--;LLL:EXT:cms/locallang_tca.xml:pages.tabs.extended'
+            'showitem' => '--palette--;Default;default,title,query,--div--;LLL:EXT:cms/locallang_tca.xml:pages.tabs.extended'
         ],
     ],
     'palettes' => [
         'default' => [
-            'showitem' => 'type, sys_language_uid, hidden'
+            'showitem' => 'type, hidden, --linebreak--, sys_language_uid, l10n_parent, l10n_diffsource'
         ],
     ]
 ];
