@@ -99,6 +99,8 @@ class SearchController extends ActionController
         $selectedQuerySetting = $this->settings['querySetting'];
         $selectedTemplateLayout= $this->settings['templateLayout'];
 
+        $contentElementData = $this->configurationManager->getContentObject()->data;
+
         if (isset($this->settings[$selectedTemplateLayout])) {
             ArrayUtility::mergeRecursiveWithOverrule($this->settings, $this->settings[$selectedTemplateLayout]);
         }
@@ -107,8 +109,11 @@ class SearchController extends ActionController
         }
 
         $templatePath = GeneralUtility::getFileAbsFileName($this->settings['templateLayouts'][$selectedTemplateLayout]);
+        if (!$templatePath) {
+            return 'ERROR: template is missing!';
+        }
 
-        if ($templatePath && !empty($this->settings['querySettings'][$selectedQuerySetting])) {
+        if (!empty($this->settings['querySettings'][$selectedQuerySetting])) {
             $selectedQuerySettings = $this->settings['querySettings'][$selectedQuerySetting];
             $selectedQuerySettings = $this->typoScriptService->convertPlainArrayToTypoScriptArray($selectedQuerySettings);
 
@@ -138,8 +143,15 @@ class SearchController extends ActionController
                 true
             );
 
-            if (!empty($this->settings['categoryFilterItem'])) {
-                $categoryFilterItem = $this->categoryFilterItemRepository->findByUid($this->settings['categoryFilterItem']);
+            $categoryFilterItemId = 0;
+            if (!empty($contentElementData['tx_solrfluidresult_categoryfilteritem'])) {
+                $categoryFilterItemId = (int)$contentElementData['tx_solrfluidresult_categoryfilteritem'];
+            } else if (!empty($this->settings['categoryFilterItem'])) {
+                $categoryFilterItemId = (int)$this->settings['categoryFilterItem'];
+            }
+
+            if ($categoryFilterItemId) {
+                $categoryFilterItem = $this->categoryFilterItemRepository->findByUid($categoryFilterItemId);
                 $categoryFilterItemFlat = $categoryFilterItem->flatten();
                 $filterString = $this->buildFilterStringFromCategoryFilterItems($categoryFilterItemFlat, $selectedQuerySettings['categoryFilterFieldName']);
                 if (!empty($filterString)) {
@@ -217,7 +229,7 @@ class SearchController extends ActionController
                 }
             }
         } else {
-            return 'ERROR: query settings and or template are missing!';
+            return 'ERROR: query settings are missing!';
         }
 
         // reassign rewritten settings
@@ -227,6 +239,8 @@ class SearchController extends ActionController
 
         $this->view->assign('resultDocumentsCount', $resultDocumentsCount);
         $this->view->assign('resultDocuments', $resultDocuments);
+
+        $this->view->assign('contentElementData', $contentElementData);
 
         if (count($facetFields)) {
             $facetResults = [];
