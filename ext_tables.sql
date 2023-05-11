@@ -19,3 +19,7 @@ CREATE TABLE tx_solrfluidresult_domain_model_categoryfilteritem (
 	PRIMARY KEY (uid),
 	KEY parent (pid)
 );
+
+CREATE TABLE tt_content (
+	tx_solrfluidresult_categoryfilteritem tinytext
+);
