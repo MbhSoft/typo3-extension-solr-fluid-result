@@ -238,12 +238,8 @@ class SearchController extends ActionController
 
         $this->view->setTemplatePathAndFilename($templatePath);
 
-        if (isset($this->settings['partialRootPath'])) {
-            $partialRootPath = isset($this->settings['partialRootPath.']) ? $this->configurationManager->getContentObject()->stdWrap($this->settings['partialRootPath'], $this->settings['partialRootPath.']) : $this->settings['partialRootPath'];
-            if ($partialRootPath) {
-                $partialRootPath = GeneralUtility::getFileAbsFileName($partialRootPath);
-                $this->view->setPartialRootPaths([$partialRootPath]);
-            }
+        if (isset($this->settings['partialRootPaths']) && is_array($this->settings['partialRootPaths'])) {
+            $this->view->setPartialRootPaths($this->settings['partialRootPaths']);
         }
     }
 
