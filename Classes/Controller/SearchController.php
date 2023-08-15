@@ -35,6 +35,7 @@ use ApacheSolrForTypo3\Solr\Domain\Search\Query\ParameterBuilder\ReturnFields;
 use MbhSoftware\SolrFluidResult\Domain\Model\CategoryFilterItem;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
+use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 /**
  * Class SearchController
@@ -227,6 +228,14 @@ class SearchController extends ActionController
                 if (!empty($selectedQuerySettings['filterResults.'])) {
                     $this->searchService->filterResults($resultDocuments, $selectedQuerySettings['filterResults.']);
                 }
+                $cacheTags = [];
+                foreach ($resultDocuments as $resultDocument) {
+                    $cacheTags[] = $resultDocument->getType() . '_' . $resultDocument->getUid();
+                }
+                if (count($cacheTags) > 0) {
+                    $this->getTypoScriptFrontendController()->addCacheTags($cacheTags);
+                }
+
             }
         } else {
             return 'ERROR: query settings are missing!';
@@ -299,5 +308,13 @@ class SearchController extends ActionController
             $generatedString = $sub[0];
         }
         return $generatedString;
+    }
+
+    /**
+     * @return \TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController
+     */
+    protected function getTypoScriptFrontendController(): TypoScriptFrontendController
+    {
+        return $GLOBALS['TSFE'];
     }
 }
