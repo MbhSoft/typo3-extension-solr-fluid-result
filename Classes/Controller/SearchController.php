@@ -3,6 +3,7 @@ namespace MbhSoftware\SolrFluidResult\Controller;
 
 use MbhSoftware\SolrFluidResult\Domain\Repository\CategoryFilterItemRepository;
 use ApacheSolrForTypo3\Solr\Domain\Search\Query\Query;
+use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Core\TypoScript\TypoScriptService;
 use MbhSoftware\SolrFluidResult\Service\SearchService;
@@ -74,7 +75,7 @@ class SearchController extends ActionController
      *
      * @return void|string
      */
-    public function indexAction()
+    public function indexAction(): ResponseInterface
     {
         $resultDocuments = [];
 
@@ -245,6 +246,7 @@ class SearchController extends ActionController
         if (isset($this->settings['partialRootPaths']) && is_array($this->settings['partialRootPaths'])) {
             $this->view->setPartialRootPaths($this->settings['partialRootPaths']);
         }
+        return $this->htmlResponse();
     }
 
     /**
