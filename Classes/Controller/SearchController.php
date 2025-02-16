@@ -3,6 +3,7 @@ namespace MbhSoftware\SolrFluidResult\Controller;
 
 use MbhSoftware\SolrFluidResult\Domain\Repository\CategoryFilterItemRepository;
 use ApacheSolrForTypo3\Solr\Domain\Search\Query\Query;
+use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Core\TypoScript\TypoScriptService;
 use MbhSoftware\SolrFluidResult\Service\SearchService;
@@ -59,32 +60,13 @@ class SearchController extends ActionController
      */
     protected $categoryFilterItemRepository;
 
-    /**
-     * inject the categoryFilterItemRepository
-     *
-     * @param CategoryFilterItemRepository $categoryFilterItemRepository
-     * @return void
-     */
-    public function injectCategoryFilterItemRepository(CategoryFilterItemRepository $categoryFilterItemRepository)
-    {
+    public function __construct(
+        CategoryFilterItemRepository $categoryFilterItemRepository,
+        TypoScriptService $typoScriptService,
+        SearchService $searchService
+    ) {
         $this->categoryFilterItemRepository = $categoryFilterItemRepository;
-    }
-
-    /**
-     * @param TypoScriptService $typoScriptService
-     * @return void
-     */
-    public function injectTypoScriptService(TypoScriptService $typoScriptService)
-    {
         $this->typoScriptService = $typoScriptService;
-    }
-
-    /**
-     * @param SearchService $searchService
-     * @return void
-     */
-    public function injectSearchService(SearchService $searchService)
-    {
         $this->searchService = $searchService;
     }
 
@@ -93,7 +75,7 @@ class SearchController extends ActionController
      *
      * @return void|string
      */
-    public function indexAction()
+    public function indexAction(): ResponseInterface
     {
         $resultDocuments = [];
 
@@ -154,7 +136,7 @@ class SearchController extends ActionController
             if ($categoryFilterItemId) {
                 $categoryFilterItem = $this->categoryFilterItemRepository->findByUid($categoryFilterItemId);
                 $categoryFilterItemFlat = $categoryFilterItem->flatten();
-                $filterString = $this->buildFilterStringFromCategoryFilterItems($categoryFilterItemFlat, $selectedQuerySettings['categoryFilterFieldName']);
+                $filterString = $this->buildFilterStringFromCategoryFilterItems($categoryFilterItemFlat, $selectedQuerySettings['categoryFilterFieldName'] ?? '');
                 if (!empty($filterString)) {
                     $filters[] = $filterString;
                 }
@@ -264,14 +246,16 @@ class SearchController extends ActionController
         if (isset($this->settings['partialRootPaths']) && is_array($this->settings['partialRootPaths'])) {
             $this->view->setPartialRootPaths($this->settings['partialRootPaths']);
         }
+        return $this->htmlResponse();
     }
 
     /**
      * @param $filterItem
+     * @param null $categoryFilterFieldName
      * @return string
      * @throws \RuntimeException
      */
-    protected function buildFilterStringFromCategoryFilterItems($filterItem, $categoryFilterFieldName)
+    protected function buildFilterStringFromCategoryFilterItems($filterItem, $categoryFilterFieldName = '')
     {
         $generatedString = '';
         $operators = [
