@@ -135,7 +135,7 @@ class SearchController extends ActionController
             if ($categoryFilterItemId) {
                 $categoryFilterItem = $this->categoryFilterItemRepository->findByUid($categoryFilterItemId);
                 $categoryFilterItemFlat = $categoryFilterItem->flatten();
-                $filterString = $this->buildFilterStringFromCategoryFilterItems($categoryFilterItemFlat, $selectedQuerySettings['categoryFilterFieldName']);
+                $filterString = $this->buildFilterStringFromCategoryFilterItems($categoryFilterItemFlat, $selectedQuerySettings['categoryFilterFieldName'] ?? '');
                 if (!empty($filterString)) {
                     $filters[] = $filterString;
                 }
@@ -249,10 +249,11 @@ class SearchController extends ActionController
 
     /**
      * @param $filterItem
+     * @param null $categoryFilterFieldName
      * @return string
      * @throws \RuntimeException
      */
-    protected function buildFilterStringFromCategoryFilterItems($filterItem, $categoryFilterFieldName)
+    protected function buildFilterStringFromCategoryFilterItems($filterItem, $categoryFilterFieldName = '')
     {
         $generatedString = '';
         $operators = [
