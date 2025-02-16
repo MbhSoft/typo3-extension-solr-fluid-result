@@ -59,32 +59,13 @@ class SearchController extends ActionController
      */
     protected $categoryFilterItemRepository;
 
-    /**
-     * inject the categoryFilterItemRepository
-     *
-     * @param CategoryFilterItemRepository $categoryFilterItemRepository
-     * @return void
-     */
-    public function injectCategoryFilterItemRepository(CategoryFilterItemRepository $categoryFilterItemRepository)
-    {
+    public function __construct(
+        CategoryFilterItemRepository $categoryFilterItemRepository,
+        TypoScriptService $typoScriptService,
+        SearchService $searchService
+    ) {
         $this->categoryFilterItemRepository = $categoryFilterItemRepository;
-    }
-
-    /**
-     * @param TypoScriptService $typoScriptService
-     * @return void
-     */
-    public function injectTypoScriptService(TypoScriptService $typoScriptService)
-    {
         $this->typoScriptService = $typoScriptService;
-    }
-
-    /**
-     * @param SearchService $searchService
-     * @return void
-     */
-    public function injectSearchService(SearchService $searchService)
-    {
         $this->searchService = $searchService;
     }
 
